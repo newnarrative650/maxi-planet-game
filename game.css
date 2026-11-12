@@ -1,0 +1,458 @@
+/*
+  Игра «Узнай свою планету»: один экран приложения 390×844 по макету Figma
+  («1 · Старт», «2 · Выбор», «3 · Перетаскивание», «4 · Результат», «5 · Подарки», «5.1 · …скопирован»).
+  Экран масштабируется целиком под окно (--s), внутри все размеры в пикселях макета.
+  Внутри экрана четыре вида (.view), показан один; статус-бар общий и лежит поверх.
+  Перетаскиваемая карточка рисуется на canvas поверх вопроса и под статус-баром.
+*/
+:root {
+  --ink: #1c1c1c;
+  --sea: #1f4a5c;
+  --maxi-orange: #ee7000;
+  --paper: #ffffff;
+  --cream: #f4ede3;
+  --paper-warm: #fdf3e7;
+  --green: #31a334;
+  --grey: #4a4a4a;
+  --backdrop: #0b1f29;
+  --font-body: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+  --s: 1;
+  color-scheme: dark; /* единый тёмный вид: вокруг экрана приложения нейтральный фон */
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding-block: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--backdrop);
+  color: var(--paper);
+}
+
+.stage {
+  position: relative;
+  width: calc(390px * var(--s));
+  height: calc(844px * var(--s));
+  border-radius: calc(28px * var(--s));
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .06);
+}
+
+.screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 390px;
+  height: 844px;
+  transform: scale(var(--s));
+  transform-origin: 0 0;
+  overflow: hidden;
+  background: var(--sea);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+.screen img { display: block; -webkit-user-drag: none; user-select: none; }
+[hidden] { display: none !important; }
+
+/* ---------- виды ---------- */
+.view { position: absolute; inset: 0; overflow: hidden; background: var(--paper-warm); }
+.view--game { background: var(--sea); }
+.view:focus { outline: none; }
+.view.is-in { animation: view-in .35s ease both; }
+@keyframes view-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- фон ---------- */
+.bg { position: absolute; inset: 0; overflow: hidden; background: var(--sea); }
+.bg img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+
+/* ---------- вопрос ---------- */
+.question {
+  position: absolute;
+  left: 0;
+  top: 72px;
+  width: 390px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.chip {
+  padding: 10px 20px;
+  border-radius: 100px;
+  background: var(--paper);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .12);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.title {
+  margin: 0;
+  color: #fff;
+  font-weight: 900;
+  font-size: var(--title-fs, 30px);
+  line-height: 1.08;
+  text-align: center;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+  white-space: nowrap;
+}
+.title span { display: block; }
+
+/* ---------- карточки ---------- */
+.products {
+  position: absolute;
+  left: 26px;
+  top: 226px;
+  display: grid;
+  grid-template-columns: 163px 163px;
+  grid-auto-rows: 189px; /* в макете второй ряд на 1 px ниже: 226 + 189 + 12 */
+  gap: 12px;
+}
+.slot { position: relative; width: 163px; height: 189px; border-radius: 20px; }
+
+.card {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 188px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: 0 6px 8px rgba(10, 43, 64, .25);
+  cursor: grab;
+  outline: none;
+  touch-action: none;
+}
+.card:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.card__img { width: 100%; height: 125px; flex: none; overflow: hidden; background: var(--cream); }
+.card__img img { width: 100%; height: 100%; object-fit: cover; }
+.card__name {
+  width: 100%;
+  height: 33px;
+  margin: 0;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: var(--name-fs, 15px);
+  line-height: 1.15;
+  text-align: center;
+}
+.screen:not([data-ready]) .card__name { opacity: 0; }
+.card__name span {
+  display: block;
+  flex: none;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* пока карточка в руке, на её месте пунктирная «лунка» */
+.slot.is-empty .card { visibility: hidden; }
+.slot__hole {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(255, 255, 255, .8);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .12);
+}
+.slot.is-empty .slot__hole { display: flex; }
+.slot__hole img { width: 40px; height: 40px; }
+
+.card.is-pop { animation: pop .32s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- подсказка ---------- */
+.bubble {
+  position: absolute;
+  left: 250px;
+  top: 654px;
+  padding: 12px 18px;
+  border-radius: 22px;
+  background: var(--paper);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .18);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.15;
+  text-align: center;
+  white-space: nowrap;
+  transition: opacity .2s ease;
+  animation: bob 2.6s ease-in-out infinite;
+}
+.bubble span { display: block; }
+.bubble.is-nudged { animation: nudge .5s ease both; }
+.screen:not([data-state="idle"]) .bubble { opacity: 0; }
+.screen:not([data-q="0"]) .bubble { display: none; }   /* подсказка нужна только на первом вопросе */
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes nudge {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-5px) rotate(-3deg); }
+  45% { transform: translateX(5px) rotate(3deg); }
+  70% { transform: translateX(-3px) rotate(-1.5deg); }
+}
+
+/* ---------- canvas ---------- */
+.fx { position: absolute; left: 0; top: 0; width: 390px; height: 844px; pointer-events: none; z-index: 20; }
+
+/* ---------- статус-бар (из макета) ---------- */
+.statusbar { position: absolute; left: 0; top: 0; width: 390px; height: 56px; background: var(--maxi-orange); z-index: 30; pointer-events: none; }
+.statusbar > * { position: absolute; display: block; }
+.sb-island { left: 0; top: 1px; width: 390px; height: 54px; max-width: none; }
+.sb-time {
+  left: 50.35px; top: 18.34px; width: 37px; height: 22px;
+  color: #fff; text-align: center;
+  font: 600 17px/22px var(--font-sys);
+}
+.sb-cell { left: 279.09px; top: 23.53px; width: 19.2px; height: 12.23px; }
+.sb-wifi { left: 305.79px; top: 23.64px; width: 17.14px; height: 12.32px; }
+.sb-batt { left: 330.09px; top: 23px; width: 25px; height: 13px; box-sizing: border-box; border: 1px solid #fff; border-radius: 4.3px; opacity: .35; }
+.sb-cap { left: 356.08px; top: 27.78px; width: 1.33px; height: 4.08px; }
+.sb-fill { left: 332.09px; top: 25px; width: 21px; height: 9px; border-radius: 2.5px; background: #fff; }
+
+.is-entering { animation: enter .35s ease both; }
+@keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ---------- кнопки (компонент «Макси/Button») ---------- */
+.btn {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 56px;
+  margin: 0;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--btn, var(--green));
+  color: #fff;
+  font: 800 20px/56px var(--font-body);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 0 6px var(--btn-glow, rgba(32, 242, 32, .45)), inset 0 -4px 2px rgba(0, 0, 0, .15);
+  cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn--orange { --btn: var(--maxi-orange); --btn-glow: rgba(255, 138, 0, .45); }
+.btn--gray { --btn: #bdbdbd; box-shadow: inset 0 -4px 2px rgba(0, 0, 0, .12); }
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px) scale(.99); filter: brightness(.96); }
+.btn:focus-visible, .again:focus-visible, .rules-link:focus-visible, .promo__copy:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.btn__label { position: relative; top: 1px; z-index: 1; }
+/* блики в левом верхнем углу: эллипсы из макета, повёрнутые на 75° и 23° */
+.gloss { position: absolute; display: grid; place-items: center; pointer-events: none; }
+.gloss img { flex: none; }
+.gloss--1 { left: 8px; top: 4px; width: 9.47px; height: 5.227px; }
+.gloss--1 img { width: 3px; height: 9px; transform: rotate(75deg); }
+.gloss--2 { left: 3.66px; top: 10px; width: 4.185px; height: 6.304px; }
+.gloss--2 img { width: 2px; height: 6px; transform: rotate(23deg); }
+
+/* ---------- 1 · Старт ---------- */
+.start__bg { position: absolute; inset: 0; overflow: hidden; }
+.start__bg img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.rules-link {
+  position: absolute;
+  left: 245px;
+  top: 64px;
+  z-index: 2;
+  padding: 10px;
+  color: var(--maxi-orange);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 17px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.intro {
+  position: absolute;
+  left: 0;
+  top: 119px;
+  width: 390px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.intro__logo { width: 142px; height: 58px; border-radius: 10px; }
+.intro__title { margin: 0; color: var(--ink); font-weight: 900; font-size: 44px; line-height: 1.05; }
+.intro__sub { margin: 0; color: var(--grey); font-weight: 600; font-size: 17px; line-height: 1.12; }
+.intro__title span, .intro__sub span { display: block; }
+.start__cta { position: absolute; left: 32px; top: 748px; width: 326px; }
+
+/* ---------- 4 · Результат ---------- */
+.result__bg { position: absolute; inset: 0; overflow: hidden; background: var(--paper-warm); }
+.result__bg img { position: absolute; left: 0; top: -9.47%; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.result__planet { position: absolute; left: -62px; top: 54px; width: 525px; height: 788px; max-width: none; object-fit: cover; }
+.result__title {
+  position: absolute;
+  left: 24px;
+  top: 92px;
+  margin: 0;
+  color: var(--ink);
+  font-weight: 900;
+  font-size: var(--rt-fs, 34px);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+.result__title span { display: block; }
+.result__text {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  bottom: 178px;          /* нижний край блока на 666 px: между текстом и кнопкой всегда 16 px, сколько бы строк ни было */
+  box-sizing: border-box;
+  width: 390px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.result__headline, .result__desc { text-shadow: 0 0 2px #fdf3e7, 0 0 5px #fdf3e7, 0 0 9px #fdf3e7, 0 0 14px #fdf3e7, 0 0 22px rgba(253, 243, 231, .85); }   /* тёплый ореол: текст читается и на нижней кромке планеты */
+.result__headline { margin: 0; color: var(--ink); font-weight: 900; font-size: var(--rh-fs, 28px); line-height: 1.12; text-wrap: balance; }
+.result__desc { margin: 0; color: #333; font-weight: 700; font-size: 16px; line-height: 1.12; }
+.result__actions {
+  position: absolute;
+  z-index: 1;
+  left: 32px;
+  top: 682px;
+  width: 326px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.again {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 56px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--ink);
+  font: 800 16px/1 var(--font-body);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.again:active { opacity: .6; }
+
+/* ---------- 5 · Подарки ---------- */
+.gifts { position: absolute; left: 16px; top: 68px; width: 358px; display: flex; flex-direction: column; gap: 24px; }
+.promo {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid rgba(49, 163, 52, .15);
+  border-radius: 24px;
+  background: #eef6e4;
+}
+.promo__head { display: flex; align-items: center; gap: 14px; height: 76px; }
+.promo__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(32, 242, 32, .45), inset 0 -4px 2px rgba(0, 0, 0, .15);
+}
+.promo__text { margin: 0; color: var(--ink); font-weight: 700; font-size: 15px; line-height: 1.25; }
+.promo__text b { color: var(--green); font-weight: 900; }
+.promo__label { margin: 0; color: var(--grey); font-weight: 800; font-size: 15px; line-height: 17px; text-align: center; }
+.promo__field {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  height: 52px;
+  border: 2px dashed var(--green);
+  border-radius: 16px;
+  background: #fff;
+}
+.promo__code {
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: .88px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.promo__copy {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.promo__copy:active { opacity: .6; }
+.promo__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.book { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.book__cover { width: 124px; height: 172px; border-radius: 10px; background: #e7eef6; box-shadow: 4px 6px 12px rgba(0, 0, 0, .2); }
+.book__info { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: var(--maxi-orange); }
+.book__title { margin: 0; font-weight: 900; font-size: 24px; line-height: 27px; }
+.book__pre { margin-top: 8px; font-weight: 800; font-size: 18px; line-height: 20px; }
+.book__price { font-weight: 900; font-size: 36px; line-height: 40px; }
+.book__note { margin: 0; color: #6b6b6b; font-weight: 600; font-size: 13px; line-height: 15px; }
+.book__note span { display: block; }
+.book .btn { width: 358px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .view.is-in { animation: none; }
+  .btn { transition: none; }
+  .is-entering { animation: none; }
+  .bubble { animation: none; }
+  .bubble.is-nudged { animation: none; }
+  .card.is-pop { animation: none; }
+}
