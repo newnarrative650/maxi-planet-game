@@ -188,6 +188,17 @@
   const PROMO = { code: 'ПРОМОКОД' };
   const LINKS = { rules: 'https://maxi-retail.ru/', book: 'https://maxi-retail.ru/' };
 
+  // Счётчик Top.Mail.Ru: сам код стоит в index.html, здесь только отправка целей.
+  // Названия целей — латиница и цифры, как требует счётчик:
+  //   startClick — нажата «Начать путешествие»;  q1Answer … q8Answer — выбран продукт на вопросе N;
+  //   resultShown — показан результат после игры;  resultHome / resultExpedition / resultGarden / resultSweet — какая планета;
+  //   giftsClick — «Забрать подарки»;  promoCopy — промокод скопирован;  promoCopyFail — скопировать не удалось, код выделен;
+  //   bookClick — «Подробнее о книге»;  rulesClick — «Правила акции»;  restartClick — «Пройти ещё раз».
+  const COUNTER_ID = '3814173';
+  function track(goal) {
+    try { (window._tmr = window._tmr || []).push({ id: COUNTER_ID, type: 'reachGoal', goal }); } catch (_) { /* счётчик не должен ломать игру */ }
+  }
+
   const TITLE = { maxW: 350, maxFont: 30, minFont: 24 };
   const W = 390, H = 844;
   const CARD = { w: 163, h: 188, r: 20, pad: 10, imgH: 125, gap: 8, nameBoxH: 33 };
@@ -570,7 +581,14 @@
     d = null; anim = null;
     // выбор сделан: следующий вопрос, а после последнего — результат
     if (chosen && qIndex + 1 < QUESTIONS.length) { loadQuestion(qIndex + 1); return; }
-    if (chosen) { setState('idle'); showResult(winner()); return; }
+    if (chosen) {
+      setState('idle');
+      const planet = winner();
+      track('resultShown');
+      track('result' + PLANETS[planet].key.replace(/^./, (c) => c.toUpperCase()));
+      showResult(planet);
+      return;
+    }
     item.slot.classList.remove('is-empty');
     setState('idle');
   }
@@ -839,6 +857,7 @@
     try { await navigator.clipboard.writeText(PROMO.code); ok = true; } catch (_) { ok = legacyCopy(PROMO.code); }
     if (!ok) selectCode();
     setCopyState(ok ? 'done' : 'manual');
+    track(ok ? 'promoCopy' : 'promoCopyFail');
     setHash(ok ? 'gifts-copied' : 'gifts');
   }
 
@@ -860,9 +879,12 @@
     showView('start', opts);
   }
 
-  $('#btn-start').addEventListener('click', () => startGame(0));
-  $('#btn-gifts').addEventListener('click', () => showGifts(false));
-  $('#btn-again').addEventListener('click', () => startGame(0));
+  $('#btn-start').addEventListener('click', () => { track('startClick'); startGame(0); });
+  $('#btn-gifts').addEventListener('click', () => { track('giftsClick'); showGifts(false); });
+  $('#btn-again').addEventListener('click', () => { track('restartClick'); startGame(0); });
+  $('#rules-link').addEventListener('click', () => track('rulesClick'));
+  $('#book-link').addEventListener('click', () => track('bookClick'));
+  screen.addEventListener('choose', (e) => track('q' + e.detail.question + 'Answer'));
   copyBtn.addEventListener('click', copyPromo);
   $('#btn-copy-icon').addEventListener('click', copyPromo);
   $('#rules-link').href = LINKS.rules;
