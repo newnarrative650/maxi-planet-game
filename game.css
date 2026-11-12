@@ -272,8 +272,17 @@ body {
 .gloss--2 img { width: 2px; height: 6px; transform: rotate(23deg); }
 
 /* ---------- 1 · Старт ---------- */
+/* стартовая картинка 1024×1536: на весь экран, планета с едой стоит между подзаголовком и кнопкой (низ картинки = низ экрана) */
+.view--start { background: #fdecd3; }
 .start__bg { position: absolute; inset: 0; overflow: hidden; }
-.start__bg img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.start__bg img {
+  position: absolute;
+  left: -76px;
+  top: 30px;
+  width: 543px;
+  height: 814px;
+  max-width: none;
+}
 .rules-link {
   position: absolute;
   left: 245px;
@@ -305,9 +314,9 @@ body {
 .start__cta { position: absolute; left: 32px; top: 748px; width: 326px; }
 
 /* ---------- 4 · Результат ---------- */
-.result__bg { position: absolute; inset: 0; overflow: hidden; background: var(--paper-warm); }
-.result__bg img { position: absolute; left: 0; top: -9.47%; width: 100%; height: 100%; max-width: none; object-fit: cover; }
-.result__planet { position: absolute; left: -62px; top: 54px; width: 525px; height: 788px; max-width: none; object-fit: cover; }
+.view--result { background: #feefd6; }
+/* иллюстрация на весь экран: размер и положение подбирает game.js так, чтобы планета встала между заголовком и текстом */
+.result__planet { position: absolute; max-width: none; }
 .result__title {
   position: absolute;
   left: 24px;
@@ -334,9 +343,8 @@ body {
   gap: 8px;
   text-align: center;
 }
-.result__headline, .result__desc { text-shadow: 0 0 2px #fdf3e7, 0 0 5px #fdf3e7, 0 0 9px #fdf3e7, 0 0 14px #fdf3e7, 0 0 22px rgba(253, 243, 231, .85); }   /* тёплый ореол: текст читается и на нижней кромке планеты */
 .result__headline { margin: 0; color: var(--ink); font-weight: 900; font-size: var(--rh-fs, 28px); line-height: 1.12; text-wrap: balance; }
-.result__desc { margin: 0; color: #333; font-weight: 700; font-size: 16px; line-height: 1.12; }
+.result__desc { margin: 0; color: var(--grey); font-weight: 600; font-size: 16px; line-height: 1.12; }
 .result__actions {
   position: absolute;
   z-index: 1;
