@@ -182,11 +182,11 @@
     },
   };
 
-  // Единый промокод для всех (в файле он пока «[ЕДИНЫЙ ПРОМОКОД]»; в макете написано «ПРОМОКОД») и ссылки кнопок.
+  // Единый промокод для всех и ссылка кнопки «Подробнее о книге» (пока ведёт на главную maxi-retail.ru).
   // Где стоит планета на экране результата: центр по x и y, масштаб не меньше min (чтобы картинка закрывала экран)
   const ART_SLOT = { cx: 195, cy: 340, scale: 0.66, w: 1024, h: 1536 };
-  const PROMO = { code: 'ПРОМОКОД' };
-  const LINKS = { rules: 'https://maxi-retail.ru/', book: 'https://maxi-retail.ru/' };
+  const PROMO = { code: 'ПЛАНЕТАЕДА' };
+  const LINKS = { book: 'https://maxi-retail.ru/' };
 
   // Счётчик Top.Mail.Ru: сам код стоит в index.html, здесь только отправка целей.
   // Названия целей — латиница и цифры, как требует счётчик:
@@ -776,6 +776,7 @@
   }
 
   function showView(name, { focus = true } = {}) {
+    closeRules(false);
     view = name;
     for (const [k, v] of Object.entries(views)) {
       if (k === name) {
@@ -920,7 +921,8 @@
   $('#btn-start').addEventListener('click', () => { track('startClick'); startGame(0); });
   $('#btn-gifts').addEventListener('click', () => { track('giftsClick'); showGifts(false); });
   $('#btn-again').addEventListener('click', () => { track('restartClick'); startGame(0); });
-  $('#rules-link').addEventListener('click', () => track('rulesClick'));
+  $('#rules-link').addEventListener('click', () => { track('rulesClick'); openRules(); });
+  $('#rules-close').addEventListener('click', () => closeRules());
   $('#btn-share').addEventListener('click', shareResult);
   $('#btn-back').addEventListener('click', () => {
     track('backClick');
@@ -930,10 +932,32 @@
   screen.addEventListener('choose', (e) => track('q' + e.detail.question + 'Answer'));
   copyBtn.addEventListener('click', copyPromo);
   $('#btn-copy-icon').addEventListener('click', copyPromo);
-  $('#rules-link').href = LINKS.rules;
   $('#book-link').href = LINKS.book;
   codeEl.textContent = PROMO.code;
   window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+
+  /* ------------------------------ правила акции ------------------------------ */
+  // окно поверх экрана; открывается по ссылке «Правила акции» в шапке, закрывается крестиком или Esc
+  const rulesEl = $('#rules'), rulesBody = $('#rules-body'), rulesLink = $('#rules-link'), rulesClose = $('#rules-close');
+  function openRules() {
+    rulesEl.hidden = false;
+    rulesBody.scrollTop = 0;
+    rulesClose.focus({ preventScroll: true });
+  }
+  function closeRules(restoreFocus = true) {
+    if (rulesEl.hidden) return;
+    rulesEl.hidden = true;
+    if (restoreFocus) rulesLink.focus({ preventScroll: true });
+  }
+  rulesEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); closeRules(); return; }
+    if (e.key !== 'Tab') return;
+    // фокус не уходит из окна: Tab ходит по кругу «текст → крестик»
+    const order = [rulesClose, rulesBody];
+    const i = order.indexOf(document.activeElement);
+    const next = order[(i + (e.shiftKey ? order.length - 1 : 1)) % order.length];
+    e.preventDefault(); next.focus({ preventScroll: true });
+  });
 
   /* ------------------------------ запуск ------------------------------ */
   resize();

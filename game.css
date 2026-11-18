@@ -287,13 +287,19 @@ body {
   right: 6px;
   top: 8px;
   z-index: 2;
+  margin: 0;
   padding: 10px;
+  border: 0;
+  background: none;
+  font-family: inherit;
   color: #fff;
   font-weight: 700;
   font-size: 15px;
   line-height: 20px;
   text-decoration: underline;
   white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .screen:not([data-view="start"]) .rules-link { display: none; }
 .intro {
@@ -448,7 +454,7 @@ body {
 }
 
 .book { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.book__cover { width: 124px; height: 172px; border-radius: 10px; background: #e7eef6; box-shadow: 4px 6px 12px rgba(0, 0, 0, .2); }
+.book__cover { display: block; width: auto; height: 172px; max-width: none; filter: drop-shadow(3px 5px 8px rgba(0, 0, 0, .22)); }
 .book__info { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: var(--maxi-orange); }
 .book__title { margin: 0; font-weight: 900; font-size: 24px; line-height: 27px; }
 .book__pre { margin-top: 8px; font-weight: 800; font-size: 18px; line-height: 20px; }
@@ -457,6 +463,25 @@ body {
 .book__note span { display: block; }
 .book .btn { width: 358px; }
 
+/* ---------- правила акции (окно поверх экрана; открывается по ссылке в шапке) ---------- */
+.rules { position: absolute; inset: 0; z-index: 60; display: flex; flex-direction: column; background: var(--paper); animation: rules-in .22s ease-out both; }
+.rules[hidden] { display: none; }
+@keyframes rules-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.rules__bar { flex: none; display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 6px 0 20px; background: #39a12c; }
+.rules__bartitle { margin: 0; color: #fff; font-weight: 900; font-size: 20px; line-height: 24px; }
+.rules__close {
+  width: 44px; height: 44px; margin: 0; padding: 0; display: grid; place-items: center;
+  border: 0; border-radius: 12px; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.rules__close:active { background: rgba(255, 255, 255, .18); }
+.rules__close:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.rules__body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 20px 36px; color: var(--ink); font-weight: 600; font-size: 14px; line-height: 1.45; }
+.rules__body:focus-visible { outline: 3px solid var(--green); outline-offset: -3px; }
+.rules__body h2 { margin: 0 0 14px; font-weight: 900; font-size: 20px; line-height: 1.2; }
+.rules__body h3 { margin: 20px 0 8px; color: var(--green); font-weight: 900; font-size: 16px; line-height: 1.25; }
+.rules__body p { margin: 0 0 10px; }
+.rules__n { font-weight: 800; }
+
 @media (prefers-reduced-motion: reduce) {
   .view.is-in { animation: none; }
   .btn { transition: none; }
@@ -464,5 +489,5 @@ body {
   .bubble { animation: none; }
   .bubble.is-nudged { animation: none; }
   .card.is-pop { animation: none; }
-  .star { animation: none; opacity: .75; }
+  .rules { animation: none; }
 }
