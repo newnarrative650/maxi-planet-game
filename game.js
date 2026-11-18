@@ -57,7 +57,7 @@
       ],
     },
     {
-      title: ['Что приготовишь на', 'завтрак в выходной?'],
+      title: ['Что выберешь на', 'завтрак в выходной?'],
       products: [
         { sku: '446231-7', planet: 'Свежий сад',           label: 'Хлопья 4 злака Семья довольна',
           full: 'Хлопья 4 злака Семья довольна 400г',
@@ -193,7 +193,8 @@
   //   startClick — нажата «Начать путешествие»;  q1Answer … q8Answer — выбран продукт на вопросе N;
   //   resultShown — показан результат после игры;  resultHome / resultExpedition / resultGarden / resultSweet — какая планета;
   //   giftsClick — «Забрать подарки»;  promoCopy — промокод скопирован;  promoCopyFail — скопировать не удалось, код выделен;
-  //   bookClick — «Подробнее о книге»;  rulesClick — «Правила акции»;  restartClick — «Пройти ещё раз».
+  //   bookClick — «Подробнее о книге»;  rulesClick — «Правила акции»;  restartClick — «Пройти ещё раз»;
+  //   backClick — стрелка назад с экрана подарков;  shareClick — нажата «Поделиться»;  shareSent — ссылка ушла (окно «Поделиться» завершено или ссылка скопирована).
   const COUNTER_ID = '3814173';
   function track(goal) {
     try { (window._tmr = window._tmr || []).push({ id: COUNTER_ID, type: 'reachGoal', goal }); } catch (_) { /* счётчик не должен ломать игру */ }
@@ -794,7 +795,10 @@
     loadQuestion(i);
   }
 
+  let lastPlanet = null;   // планета, которую игрок видел последней: сюда ведёт стрелка «назад» с экрана подарков
+
   function showResult(planetName) {
+    lastPlanet = planetName;
     const p = PLANETS[planetName];
     const planetTitle = planetName;
     $('#result-planet').textContent = planetTitle;
@@ -861,6 +865,40 @@
     setHash(ok ? 'gifts-copied' : 'gifts');
   }
 
+  /* ------------------------------ поделиться результатом ------------------------------ */
+  // Делимся ссылкой на страницу планеты (p/<планета>/): у неё свои метатеги, поэтому мессенджер сам показывает карточку
+  // с картинкой планеты, заголовком «Моя планета — …» и описанием. Страницы и картинки делает build_share.py / make_cards.py.
+  const SHARE = { text: 'Узнай свою планету в игре Макси', utm: 'utm_source=share&utm_medium=quiz' };
+  const shareLabel = $('#btn-share-label');
+  let shareTimer = 0;
+
+  function shareData() {
+    const p = PLANETS[lastPlanet];
+    const url = new URL(`p/${p.key}/?${SHARE.utm}&utm_campaign=planet_${p.key}`, document.baseURI).href;
+    return { title: `Моя планета — ${lastPlanet}`, text: SHARE.text, url };
+  }
+
+  function flashShare(label) {
+    shareLabel.textContent = label;
+    clearTimeout(shareTimer);
+    shareTimer = setTimeout(() => { shareLabel.textContent = 'Поделиться'; }, 2600);
+  }
+
+  async function shareResult() {
+    if (!lastPlanet) return;
+    track('shareClick');
+    const data = shareData();
+    if (navigator.share) {                                   // телефоны по https: системное окно
+      try { await navigator.share(data); track('shareSent'); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; /* закрыл окно — не ошибка; иначе копируем */ }
+    }
+    const text = `${data.title}\n${data.text}\n${data.url}`;   // компьютер или http: копируем текст со ссылкой
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) { ok = legacyCopy(text); }
+    if (ok) track('shareSent');
+    flashShare(ok ? 'Ссылка скопирована' : 'Не удалось скопировать');
+  }
+
   function showGifts(copied = false) {
     setCopyState(copied ? 'done' : 'idle');
     setHash(copied ? 'gifts-copied' : 'gifts');
@@ -883,6 +921,11 @@
   $('#btn-gifts').addEventListener('click', () => { track('giftsClick'); showGifts(false); });
   $('#btn-again').addEventListener('click', () => { track('restartClick'); startGame(0); });
   $('#rules-link').addEventListener('click', () => track('rulesClick'));
+  $('#btn-share').addEventListener('click', shareResult);
+  $('#btn-back').addEventListener('click', () => {
+    track('backClick');
+    if (lastPlanet) { showResult(lastPlanet); } else { setHash('start'); showView('start'); }
+  });
   $('#book-link').addEventListener('click', () => track('bookClick'));
   screen.addEventListener('choose', (e) => track('q' + e.detail.question + 'Answer'));
   copyBtn.addEventListener('click', copyPromo);
@@ -892,7 +935,22 @@
   codeEl.textContent = PROMO.code;
   window.addEventListener('hashchange', () => go(location.hash.slice(1)));
 
+  /* ------------------------------ звёздочки на фоне вопросов ------------------------------ */
+  // [x, y, размер, задержка, период] в пикселях макета; расставлены там, где фон открыт: у краёв, под заголовком и над корзиной
+  const STARS = [
+    [30, 92, 12, 0, 3.2], [352, 88, 9, 1.1, 2.6], [58, 208, 8, .6, 3.8], [330, 210, 13, 1.8, 3], [196, 206, 6, 2.4, 3.4],
+    [13, 300, 9, .3, 2.8], [377, 362, 8, 2.2, 3.4], [14, 452, 11, 1.4, 3.6], [376, 522, 9, .8, 2.9], [12, 590, 8, 2.6, 3.1],
+    [62, 640, 11, 1.9, 2.7], [112, 676, 7, .5, 3.3], [300, 634, 9, 1.3, 3.7],
+  ];
+  function buildStars() {
+    const host = $('#stars');
+    const star = '<svg viewBox="-1 -1 2 2" aria-hidden="true"><path d="M0-1C.1-.3.3-.1 1 0C.3.1.1.3 0 1C-.1.3-.3.1-1 0C-.3-.1-.1-.3 0-1Z" fill="currentColor"/></svg>';
+    host.innerHTML = STARS.map(([x, y, sz, delay, dur]) =>
+      `<span class="star" style="left:${x}px;top:${y}px;--sz:${sz}px;--delay:${delay}s;--dur:${dur}s">${star}</span>`).join('');
+  }
+
   /* ------------------------------ запуск ------------------------------ */
+  buildStars();
   resize();
   new ResizeObserver(resize).observe(document.body);
   preloadQuestion(0);

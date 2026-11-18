@@ -76,6 +76,23 @@ body {
 .bg { position: absolute; inset: 0; overflow: hidden; background: var(--sea); }
 .bg img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 
+/* ---------- звёздочки и роза в корзинке ---------- */
+/* ВРЕМЕННО ВЫКЛЮЧЕНО: ждём новую картинку фона, где роза и звёзды нарисованы сразу; когда она будет, этот блок и разметку #stars / .rose удалить */
+.stars, .rose { position: absolute; inset: 0; pointer-events: none; display: none; }
+.star {
+  position: absolute;
+  width: var(--sz); height: var(--sz);
+  margin: calc(var(--sz) / -2) 0 0 calc(var(--sz) / -2);
+  color: #fff3c4;
+  filter: drop-shadow(0 0 3px rgba(255, 236, 170, .85));
+  animation: twinkle var(--dur) ease-in-out var(--delay) infinite;
+}
+.star svg { display: block; width: 100%; height: 100%; }
+@keyframes twinkle { 0%, 100% { opacity: .3; transform: scale(.72); } 50% { opacity: 1; transform: scale(1); } }
+/* всё, что ниже переднего бортика корзины (нижняя половина её зева), скрыто: стебель уходит внутрь */
+.rose { clip-path: path('M0 0H390V713H229.5A48 13 0 0 1 133.5 713H0Z'); }
+.rose img { position: absolute; left: 148px; top: 634px; width: 69px; height: 96px; max-width: none; }
+
 /* ---------- вопрос ---------- */
 .question {
   position: absolute;
@@ -217,20 +234,19 @@ body {
 /* ---------- canvas ---------- */
 .fx { position: absolute; left: 0; top: 0; width: 390px; height: 844px; pointer-events: none; z-index: 20; }
 
-/* ---------- статус-бар (из макета) ---------- */
-.statusbar { position: absolute; left: 0; top: 0; width: 390px; height: 56px; background: var(--maxi-orange); z-index: 30; pointer-events: none; }
-.statusbar > * { position: absolute; display: block; }
-.sb-island { left: 0; top: 1px; width: 390px; height: 54px; max-width: none; }
-.sb-time {
-  left: 50.35px; top: 18.34px; width: 37px; height: 22px;
-  color: #fff; text-align: center;
-  font: 600 17px/22px var(--font-sys);
+/* ---------- шапка: зелёная, с логотипом ---------- */
+/* зелёный взят из самого логотипа (плитка 57,161,44), поэтому плитка с шапкой сливаются без шва */
+.topbar { position: absolute; left: 0; top: 0; width: 390px; height: 56px; background: #39a12c; z-index: 30; }
+.topbar__logo { position: absolute; left: 4px; top: 0; width: 137px; height: 56px; max-width: none; transition: left .2s ease; }
+.topbar__back {
+  position: absolute; left: 4px; top: 6px; width: 44px; height: 44px; margin: 0; padding: 0;
+  display: none; place-items: center; border: 0; border-radius: 12px; background: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
-.sb-cell { left: 279.09px; top: 23.53px; width: 19.2px; height: 12.23px; }
-.sb-wifi { left: 305.79px; top: 23.64px; width: 17.14px; height: 12.32px; }
-.sb-batt { left: 330.09px; top: 23px; width: 25px; height: 13px; box-sizing: border-box; border: 1px solid #fff; border-radius: 4.3px; opacity: .35; }
-.sb-cap { left: 356.08px; top: 27.78px; width: 1.33px; height: 4.08px; }
-.sb-fill { left: 332.09px; top: 25px; width: 21px; height: 9px; border-radius: 2.5px; background: #fff; }
+.topbar__back:active { background: rgba(255, 255, 255, .18); }
+.topbar__back:focus-visible, .topbar .rules-link:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.screen[data-view="gifts"] .topbar__back { display: grid; }
+.screen[data-view="gifts"] .topbar__logo { left: 48px; }
 
 .is-entering { animation: enter .35s ease both; }
 @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -261,7 +277,7 @@ body {
 .btn--gray { --btn: #bdbdbd; box-shadow: inset 0 -4px 2px rgba(0, 0, 0, .12); }
 .btn:hover { filter: brightness(1.05); }
 .btn:active { transform: translateY(1px) scale(.99); filter: brightness(.96); }
-.btn:focus-visible, .again:focus-visible, .rules-link:focus-visible, .promo__copy:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.btn:focus-visible, .again:focus-visible, .promo__copy:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .btn__label { position: relative; top: 1px; z-index: 1; }
 /* блики в левом верхнем углу: эллипсы из макета, повёрнутые на 75° и 23° */
 .gloss { position: absolute; display: grid; place-items: center; pointer-events: none; }
@@ -285,21 +301,22 @@ body {
 }
 .rules-link {
   position: absolute;
-  left: 245px;
-  top: 64px;
+  right: 6px;
+  top: 8px;
   z-index: 2;
   padding: 10px;
-  color: var(--maxi-orange);
+  color: #fff;
   font-weight: 700;
   font-size: 15px;
-  line-height: 17px;
+  line-height: 20px;
   text-decoration: underline;
   white-space: nowrap;
 }
+.screen:not([data-view="start"]) .rules-link { display: none; }
 .intro {
   position: absolute;
   left: 0;
-  top: 119px;
+  top: 138px;
   width: 390px;
   display: flex;
   flex-direction: column;
@@ -307,9 +324,8 @@ body {
   gap: 14px;
   text-align: center;
 }
-.intro__logo { width: 142px; height: 58px; border-radius: 10px; }
-.intro__title { margin: 0; color: var(--ink); font-weight: 900; font-size: 44px; line-height: 1.05; }
-.intro__sub { margin: 0; color: var(--grey); font-weight: 600; font-size: 17px; line-height: 1.12; }
+.intro__title { margin: 0; color: var(--start-title, var(--ink)); font-weight: 900; font-size: 44px; line-height: 1.05; }
+.intro__sub { margin: 0; color: var(--start-sub, var(--grey)); font-weight: 600; font-size: 17px; line-height: 1.12; }
 .intro__title span, .intro__sub span { display: block; }
 .start__cta { position: absolute; left: 32px; top: 748px; width: 326px; }
 
@@ -363,7 +379,7 @@ body {
   gap: 6px;
   height: 56px;
   margin: 0;
-  padding: 0 12px;
+  padding: 0 8px;
   border: 0;
   border-radius: 12px;
   background: none;
@@ -373,6 +389,8 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 .again:active { opacity: .6; }
+.result__more { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.again svg, .again img { flex: none; }
 
 /* ---------- 5 · Подарки ---------- */
 .gifts { position: absolute; left: 16px; top: 68px; width: 358px; display: flex; flex-direction: column; gap: 24px; }
@@ -463,4 +481,5 @@ body {
   .bubble { animation: none; }
   .bubble.is-nudged { animation: none; }
   .card.is-pop { animation: none; }
+  .star { animation: none; opacity: .75; }
 }
