@@ -76,23 +76,6 @@ body {
 .bg { position: absolute; inset: 0; overflow: hidden; background: var(--sea); }
 .bg img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 
-/* ---------- звёздочки и роза в корзинке ---------- */
-/* ВРЕМЕННО ВЫКЛЮЧЕНО: ждём новую картинку фона, где роза и звёзды нарисованы сразу; когда она будет, этот блок и разметку #stars / .rose удалить */
-.stars, .rose { position: absolute; inset: 0; pointer-events: none; display: none; }
-.star {
-  position: absolute;
-  width: var(--sz); height: var(--sz);
-  margin: calc(var(--sz) / -2) 0 0 calc(var(--sz) / -2);
-  color: #fff3c4;
-  filter: drop-shadow(0 0 3px rgba(255, 236, 170, .85));
-  animation: twinkle var(--dur) ease-in-out var(--delay) infinite;
-}
-.star svg { display: block; width: 100%; height: 100%; }
-@keyframes twinkle { 0%, 100% { opacity: .3; transform: scale(.72); } 50% { opacity: 1; transform: scale(1); } }
-/* всё, что ниже переднего бортика корзины (нижняя половина её зева), скрыто: стебель уходит внутрь */
-.rose { clip-path: path('M0 0H390V713H229.5A48 13 0 0 1 133.5 713H0Z'); }
-.rose img { position: absolute; left: 148px; top: 634px; width: 69px; height: 96px; max-width: none; }
-
 /* ---------- вопрос ---------- */
 .question {
   position: absolute;

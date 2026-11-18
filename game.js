@@ -935,22 +935,7 @@
   codeEl.textContent = PROMO.code;
   window.addEventListener('hashchange', () => go(location.hash.slice(1)));
 
-  /* ------------------------------ звёздочки на фоне вопросов ------------------------------ */
-  // [x, y, размер, задержка, период] в пикселях макета; расставлены там, где фон открыт: у краёв, под заголовком и над корзиной
-  const STARS = [
-    [30, 92, 12, 0, 3.2], [352, 88, 9, 1.1, 2.6], [58, 208, 8, .6, 3.8], [330, 210, 13, 1.8, 3], [196, 206, 6, 2.4, 3.4],
-    [13, 300, 9, .3, 2.8], [377, 362, 8, 2.2, 3.4], [14, 452, 11, 1.4, 3.6], [376, 522, 9, .8, 2.9], [12, 590, 8, 2.6, 3.1],
-    [62, 640, 11, 1.9, 2.7], [112, 676, 7, .5, 3.3], [300, 634, 9, 1.3, 3.7],
-  ];
-  function buildStars() {
-    const host = $('#stars');
-    const star = '<svg viewBox="-1 -1 2 2" aria-hidden="true"><path d="M0-1C.1-.3.3-.1 1 0C.3.1.1.3 0 1C-.1.3-.3.1-1 0C-.3-.1-.1-.3 0-1Z" fill="currentColor"/></svg>';
-    host.innerHTML = STARS.map(([x, y, sz, delay, dur]) =>
-      `<span class="star" style="left:${x}px;top:${y}px;--sz:${sz}px;--delay:${delay}s;--dur:${dur}s">${star}</span>`).join('');
-  }
-
   /* ------------------------------ запуск ------------------------------ */
-  buildStars();
   resize();
   new ResizeObserver(resize).observe(document.body);
   preloadQuestion(0);
