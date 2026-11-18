@@ -393,7 +393,7 @@ body {
   border-radius: 24px;
   background: #eef6e4;
 }
-.promo__head { display: flex; align-items: center; gap: 14px; height: 76px; }
+.promo__head { display: flex; align-items: center; gap: 14px; min-height: 76px; }
 .promo__tile {
   flex: none;
   display: grid;
