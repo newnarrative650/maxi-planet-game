@@ -942,12 +942,14 @@
   const rulesEl = $('#rules'), rulesBody = $('#rules-body'), rulesLink = $('#rules-link'), rulesClose = $('#rules-close');
   function openRules() {
     rulesEl.hidden = false;
+    document.documentElement.classList.add('rules-open');   // фон вокруг окна правил тоже белый
     rulesBody.scrollTop = 0;
     rulesClose.focus({ preventScroll: true });
   }
   function closeRules(restoreFocus = true) {
     if (rulesEl.hidden) return;
     rulesEl.hidden = true;
+    document.documentElement.classList.remove('rules-open');
     if (restoreFocus) rulesLink.focus({ preventScroll: true });
   }
   rulesEl.addEventListener('keydown', (e) => {

@@ -74,7 +74,9 @@ body {
   .stage { z-index: 1; border-radius: 0; box-shadow: none; }
   /* на дробной границе экрана не должно проступать тёмное «море» под картинкой */
   .stage .screen, .stage .view--game, .stage .bg { background: transparent; }
+  /* цвет вокруг экрана = цвет самого вида, чтобы не было швов по бокам и снизу */
   html[data-view="start"] body {
+    background-color: #fdecd4;
     background-image: url("assets/start-planets.webp");
     background-size: calc(543px * var(--s)) calc(814px * var(--s));
     background-position: calc(50% + .5px * var(--s)) calc(30px * var(--s));
@@ -85,6 +87,9 @@ body {
     background-size: auto calc(844px * var(--s));
     background-position: center top;
   }
+  html[data-view="result"] body { background-color: #feefd6; }
+  html[data-view="gifts"] body { background-color: var(--paper-warm); }
+  html.rules-open body { background-color: var(--paper); background-image: none; }
 }
 
 .screen {
