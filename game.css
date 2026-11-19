@@ -44,6 +44,49 @@ body {
   box-shadow: 0 24px 64px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .06);
 }
 
+/* ---------- на телефоне и в вебвью приложения: экран занимает всё окно ----------
+   Никакой рамки «телефон в телефоне»: без тёмного фона, скруглений и тени.
+   Экран масштабируется целиком (по высоте или по ширине окна) и прижат к верху;
+   по бокам и снизу фон продолжается: у вопросов — та же картинка, у остальных — цвет экрана,
+   а шапка тянется на всю ширину. Вид экрана приходит из game.js в html[data-view]. */
+@media (max-width: 600px) {
+  html { overflow: hidden; overscroll-behavior: none; }
+  html, body { height: 100%; }
+  @supports (height: 100dvh) { html, body { height: 100dvh; } }
+  body {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    place-items: start center;
+    background: var(--paper-warm) none no-repeat;
+    background-origin: content-box;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: calc(env(safe-area-inset-top, 0px) + 56px * var(--s));
+    background: #39a12c;
+    pointer-events: none;
+  }
+  .stage { z-index: 1; border-radius: 0; box-shadow: none; }
+  /* на дробной границе экрана не должно проступать тёмное «море» под картинкой */
+  .stage .screen, .stage .view--game, .stage .bg { background: transparent; }
+  html[data-view="start"] body {
+    background-image: url("assets/start-planets.webp");
+    background-size: calc(543px * var(--s)) calc(814px * var(--s));
+    background-position: calc(50% + .5px * var(--s)) calc(30px * var(--s));
+  }
+  html[data-view="game"] body {
+    background-color: #4c911c;
+    background-image: url("assets/bg.webp");
+    background-size: auto calc(844px * var(--s));
+    background-position: center top;
+  }
+}
+
 .screen {
   position: absolute;
   left: 0;

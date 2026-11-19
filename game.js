@@ -784,6 +784,7 @@
       } else v.hidden = true;
     }
     screen.dataset.view = name;
+    document.documentElement.dataset.view = name;   // для фона вокруг экрана на телефоне (game.css)
     screen.setAttribute('aria-label', `Игра «Узнай свою планету». ${VIEW_LABEL[name]}`);
     if (name !== 'game') resetGameLayer();
     if (focus && name !== 'game') views[name].focus({ preventScroll: true });
