@@ -9,7 +9,7 @@
 
 ## Метрика и «Поделиться»
 - Счётчик Top.Mail.Ru (id `3814173`): код в `index.html`, цели (`startClick`, `q1Answer…q8Answer`, `resultShown`, `resultHome/Expedition/Garden/Sweet`, `giftsClick`, `promoCopy`, `bookClick`, `rulesClick`, `restartClick`, `backClick`, `shareClick`, `shareSent`) отправляет `track()` в `game.js`.
-- «Поделиться» ведёт на `p/<планета>/` — копии игры со своими OG-тегами и картинкой `assets/share-<планета>.jpg` (1200×630). Адреса в тегах абсолютные, их домен задаётся при сборке (`SITE_URL`, по умолчанию `https://promo.maxi-retail.ru`); при смене домена теги нужно пересобрать (`SITE_URL=https://домен python3 build_share.py`).
+- «Поделиться» ведёт на `p/<планета>/` — копии игры со своими OG-тегами и картинкой `assets/share-<планета>.jpg` (1200×630). Адреса в тегах абсолютные, их домен задаётся при сборке (`SITE_URL`, по умолчанию `https://maxi-planet-game.vercel.app`); при смене домена теги нужно пересобрать (`SITE_URL=https://домен python3 build_share.py`).
 
 ## Что настраивается в `game.js`
 - `QUESTIONS` — вопросы и продукты (подпись `label`, артикул `sku`, планета `planet`, фото `img`).
