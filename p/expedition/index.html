@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<base href="../../">
 <title>Моя планета — Вкусовая экспедиция</title>
 <!-- og:begin -->
 <meta name="description" content="Тебе интересно, что за следующим поворотом. Узнай свою планету в игре Макси">
@@ -19,13 +18,42 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- og:end -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#39a12c">
+<link rel="icon" href="../../assets/logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
-<link rel="stylesheet" href="game.css">
-
+<style>
+:root { --green: #39a12c; --ink: #1c1c1c; --grey: #4a4a4a; --paper: #feefd6; --maxi-orange: #ee7000; color-scheme: light; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; background: var(--paper); color: var(--ink); font-family: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+.bar { background: var(--green); padding-top: env(safe-area-inset-top, 0px); }
+.bar__in { max-width: 480px; height: 56px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; }
+.bar__logo { display: block; width: 137px; height: 56px; }
+.page { max-width: 480px; margin: 0 auto; padding: 18px max(20px, env(safe-area-inset-left, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)); text-align: center; }
+.kicker { margin: 0; color: var(--grey); font-weight: 800; font-size: 16px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; }
+.name { margin: 4px 0 18px; font-weight: 900; font-size: clamp(36px, 11.5vw, 50px); line-height: 1.05; text-wrap: balance; }
+.art { width: min(100%, 316px); margin: 0 auto; border-radius: 28px; overflow: hidden; box-shadow: 0 12px 32px rgba(120, 70, 20, .2), 0 0 0 1px rgba(120, 70, 20, .06); animation: art-in .5s ease both; }
+.art img { display: block; width: 100%; height: auto; }
+@keyframes art-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+.headline { margin: 20px 0 0; font-weight: 800; font-size: 22px; line-height: 1.2; text-wrap: balance; }
+.cta { margin-top: 28px; padding-top: 24px; border-top: 2px dashed rgba(120, 70, 20, .2); }
+.cta h2 { margin: 0; font-weight: 900; font-size: 28px; line-height: 1.1; text-wrap: balance; }
+.cta p { margin: 8px 0 18px; color: var(--grey); font-weight: 600; font-size: 17px; line-height: 1.25; text-wrap: balance; }
+.btn { position: relative; display: block; width: 100%; height: 56px; padding: 0 16px; border-radius: 16px; background: var(--green); color: #fff; font: 800 20px/56px "Nunito", "Segoe UI", system-ui, sans-serif; text-align: center; text-decoration: none; white-space: nowrap; box-shadow: 0 0 6px rgba(32, 242, 32, .45), inset 0 -4px 2px rgba(0, 0, 0, .15); transition: transform .12s ease, filter .12s ease; -webkit-tap-highlight-color: transparent; }
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px) scale(.99); filter: brightness(.96); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.btn__label { position: relative; top: 1px; }
+.gloss { position: absolute; display: grid; place-items: center; pointer-events: none; }
+.gloss img { flex: none; display: block; }
+.gloss--1 { left: 8px; top: 4px; width: 9.47px; height: 5.227px; }
+.gloss--1 img { width: 3px; height: 9px; transform: rotate(75deg); }
+.gloss--2 { left: 3.66px; top: 10px; width: 4.185px; height: 6.304px; }
+.gloss--2 img { width: 2px; height: 6px; transform: rotate(23deg); }
+@media (prefers-reduced-motion: reduce) { .art { animation: none; } .btn { transition: none; } }
+</style>
 <!-- Top.Mail.Ru counter -->
 <script type="text/javascript">
 var _tmr = window._tmr || (window._tmr = []);
@@ -41,168 +69,26 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
 </head>
 <body>
 <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3814173;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
-<!-- /Top.Mail.Ru counter -->
-
-<main class="stage" id="stage">
-  <div class="screen" id="screen" data-view="start" data-state="idle" data-q="0" role="group" aria-label="Игра «Узнай свою планету»">
-
-    <!-- 1 · Старт -->
-    <section class="view view--start" id="v-start" aria-labelledby="start-title">
-      <div class="start__bg" aria-hidden="true"><img src="assets/start-planets.webp" alt="" draggable="false"></div>
-      <div class="intro">
-        <h1 class="intro__title" id="start-title"><span>Узнай свою</span><span>планету</span></h1>
-        <p class="intro__sub"><span>Выбирай любимые продукты</span><span>и получи промокод от Макси</span></p>
-      </div>
-      <button class="btn btn--green start__cta" id="btn-start" type="button">
-        <span class="btn__label">Начать путешествие</span>
-        <span class="gloss gloss--1" aria-hidden="true"><img src="assets/gloss-1.svg" alt=""></span>
-        <span class="gloss gloss--2" aria-hidden="true"><img src="assets/gloss-2.svg" alt=""></span>
-      </button>
-    </section>
-
-    <!-- 2–3 · Вопрос: выбор и перетаскивание (карточки собираются из game.js) -->
-    <section class="view view--game" id="v-game" hidden aria-label="Вопрос">
-      <div class="bg" aria-hidden="true">
-        <img src="assets/bg.webp" alt="" draggable="false">
-      </div>
-
-      <div class="question">
-        <div class="chip" id="chip">Вопрос 1 из 8</div>
-        <h1 class="title" id="title"></h1>
-      </div>
-
-      <div class="products" id="products"></div>
-
-      <!-- Подсказка: только на первом вопросе -->
-      <div class="bubble" id="bubble" aria-hidden="true">
-        <span>Перетащи</span><span>продукт</span><span>в корзинку</span>
-      </div>
-
-      <!-- Слой перетаскивания: карточка в руке, подсветка корзины, искры -->
-      <canvas class="fx" id="fx" width="390" height="844" aria-hidden="true"></canvas>
-    </section>
-
-    <!-- 4 · Результат -->
-    <section class="view view--result" id="v-result" hidden aria-labelledby="result-title">
-      <img class="result__planet" id="result-art" src="assets/planet-home.webp" alt="" draggable="false">
-      <h1 class="result__title" id="result-title"><span>Твоя планета —</span><span id="result-planet"></span></h1>
-      <div class="result__text">
-        <h2 class="result__headline" id="result-headline"></h2>
-        <p class="result__desc" id="result-desc"></p>
-      </div>
-      <div class="result__actions">
-        <button class="btn btn--green" id="btn-gifts" type="button">
-          <span class="btn__label">Забрать подарки</span>
-          <span class="gloss gloss--1" aria-hidden="true"><img src="assets/gloss-1.svg" alt=""></span>
-          <span class="gloss gloss--2" aria-hidden="true"><img src="assets/gloss-2.svg" alt=""></span>
-        </button>
-        <div class="result__more">
-          <button class="again" id="btn-again" type="button">
-            <img src="assets/icon-refresh.svg" alt="" width="18" height="18" draggable="false">
-            <span>Пройти ещё раз</span>
-          </button>
-          <button class="again" id="btn-share" type="button">
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 15V4M12 4l-4 4M12 4l4 4M5 12v6a2 2 0 002 2h10a2 2 0 002-2v-6" fill="none" stroke="#31a334" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span id="btn-share-label" role="status" aria-live="polite">Поделиться</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5 · Подарки / 5.1 · промокод скопирован -->
-    <section class="view view--gifts" id="v-gifts" hidden aria-label="Подарки">
-      <div class="gifts">
-        <div class="promo">
-          <div class="promo__head">
-            <div class="promo__tile" aria-hidden="true"><img src="assets/icon-promo-basket.svg" alt="" width="34" height="34" draggable="false"></div>
-            <p class="promo__text">Забирай <b>промокод 30%</b><br>на готовую еду Макси.<br>Промокод действителен<br>до 18.02.2027. Скопируй и<br>активируй в личном кабинете.</p>
-          </div>
-          <p class="promo__label">Твой промокод</p>
-          <div class="promo__field">
-            <span class="promo__code" id="promo-code">ПЛАНЕТАЕДА</span>
-            <button class="promo__copy" id="btn-copy-icon" type="button" aria-label="Скопировать промокод">
-              <img src="assets/icon-copy.svg" alt="" width="24" height="24" draggable="false">
-            </button>
-          </div>
-          <button class="btn btn--green" id="btn-copy" type="button">
-            <span class="btn__label" id="btn-copy-label">Забрать</span>
-            <span class="gloss gloss--1" aria-hidden="true"><img src="assets/gloss-1.svg" alt=""></span>
-            <span class="gloss gloss--2" aria-hidden="true"><img src="assets/gloss-2.svg" alt=""></span>
-          </button>
-          <p class="promo__status" id="copy-status" role="status" aria-live="polite"></p>
-        </div>
-
-        <div class="book">
-          <img class="book__cover" src="assets/book.webp" alt="Книга «Маленький принц», специальное издание" width="136" height="172" draggable="false">
-          <div class="book__info">
-            <h2 class="book__title">Маленький принц</h2>
-            <span class="book__pre">Книга за</span>
-            <span class="book__price">389 ₽</span>
-            <p class="book__note"><span>при использовании</span><span>5 фишек Макси</span></p>
-          </div>
-          <a class="btn btn--orange" id="book-link" href="https://maxi-retail.ru/" target="_blank" rel="noopener">
-            <span class="btn__label">Подробнее о книге</span>
-            <span class="gloss gloss--1" aria-hidden="true"><img src="assets/gloss-1.svg" alt=""></span>
-            <span class="gloss gloss--2" aria-hidden="true"><img src="assets/gloss-2.svg" alt=""></span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Шапка: зелёная, с логотипом (как на лендинге). На экране подарков слева стрелка назад к своей планете -->
-    <header class="topbar">
-      <button class="topbar__back" id="btn-back" type="button" aria-label="Назад к своей планете">
-        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <img class="topbar__logo" src="assets/logo.webp" alt="Макси — сеть магазинов" width="137" height="56" draggable="false">
-      <button class="rules-link" id="rules-link" type="button" aria-haspopup="dialog" aria-controls="rules">Правила акции</button>
-    </header>
-
-    <!-- Правила акции: открываются по ссылке «Правила акции» на стартовом экране. Текст берётся из Pravila_igry.docx (gen_rules.py) -->
-    <div class="rules" id="rules" hidden role="dialog" aria-modal="true" aria-labelledby="rules-title">
-      <div class="rules__bar">
-        <h2 class="rules__bartitle" id="rules-title">Правила акции</h2>
-        <button class="rules__close" id="rules-close" type="button" aria-label="Закрыть правила">
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <div class="rules__body" id="rules-body" tabindex="0">
-          <!-- rules:begin -->
-          <h2>Условия акции «Игра Маленький принц»</h2>
-          <h3>1. Общие положения</h3>
-          <p><span class="rules__n">1.1.</span> Настоящие Условия содержат сведения о маркетинговом мероприятии «Игра Маленький принц» (далее — «Акция»), сроках его проведения, порядке участия и получения промокода.</p>
-          <p><span class="rules__n">1.2.</span> Акция направлена на поддержание и повышение лояльности покупателей к сети магазинов «Макси». Игра размещается в мобильном приложении «Макси» под названием «Узнай свою планету» (далее — «Игра»).</p>
-          <p><span class="rules__n">1.3.</span> Организатором Акции является индивидуальный предприниматель Роздухов Максим Евгеньевич (ИНН 35250010138; ОГРН 304352521100085), далее — «Организатор».</p>
-          <p><span class="rules__n">1.4.</span> К участию в Акции допускаются дееспособные совершеннолетние граждане Российской Федерации, проживающие в регионах присутствия сети магазинов «Макси» (далее — «Участник»).</p>
-          <p><span class="rules__n">1.5.</span> Проводимая Акция не является лотереей, азартной игрой или пари. За участие в Игре плата не взимается.</p>
-          <p><span class="rules__n">1.6.</span> Период проведения Акции: с 19.11.2026 по 18.02.2027 включительно. Срок использования промокода: с 19.11.2026 по 18.02.2027 включительно.</p>
-          <h3>2. Механика акции</h3>
-          <p><span class="rules__n">2.1.</span> Для участия в Акции необходимо зарегистрироваться или авторизоваться в мобильном приложении «Макси», открыть Игру из раздела «Спецпредложения» на главном экране и нажать кнопку «Начать путешествие».</p>
-          <p><span class="rules__n">2.2.</span> Основная игровая механика — «Выбор варианта из продукции Макси». Участник последовательно отвечает на вопросы, выбирая один из предложенных вариантов продукции «Макси» нажатием на соответствующую карточку товара. Каждый вариант представлен изображением продукта и его наименованием.</p>
-          <p><span class="rules__n">2.3.</span> В каждом вопросе Участник выбирает один вариант ответа. После выбора Игра переходит к следующему вопросу. Количество вопросов и доступные варианты отображаются в интерфейсе Игры. Правильные и неправильные ответы отсутствуют.</p>
-          <p><span class="rules__n">2.4.</span> После ответа на все вопросы Участнику показывается персональный игровой результат — его «планета», определяемая на основании выбранных вариантов продукции. Результат носит развлекательный характер.</p>
-          <p><span class="rules__n">2.5.</span> На экране результата Участник нажимает кнопку «Забрать подарки» и переходит на экран с промокодом и предложением по книге «Маленький принц».</p>
-          <p><span class="rules__n">2.6.</span> Каждый Участник, завершивший Игру, получает один промокод. Для всех Участников используется один и тот же промокод на одинаковых условиях. Его получение и условия использования не зависят от выбранных продуктов и итоговой «планеты». Случайное распределение промокодов не производится.</p>
-          <p><span class="rules__n">2.7.</span> Участник может пройти Игру повторно. Повторное прохождение не предоставляет новый промокод и не увеличивает количество его использований на одну карту постоянного покупателя «Макси».</p>
-          <p><span class="rules__n">2.8.</span> Для активации промокода Участнику необходимо ввести его в мобильном приложении «Макси» и нажать кнопку «Активировать промокод» в разделе «Спецпредложения» или «Промокоды».</p>
-          <p><span class="rules__n">2.9.</span> Промокод может быть использован один раз на одну карту постоянного покупателя «Макси» в течение срока, указанного в пункте 1.6 настоящих Условий. Предложение действительно при наличии участвующих в Акции товаров.</p>
-          <p><span class="rules__n">2.10.</span> Промокод и предусмотренное им преимущество не заменяются денежным эквивалентом или иными предложениями по требованию Участника.</p>
-          <p><span class="rules__n">2.11.</span> На экране подарков дополнительно размещается предложение приобрести книгу «Маленький принц» за 389 рублей при использовании 5 фишек «Макси». Кнопка «Подробнее о книге» ведет к условиям соответствующего предложения в мобильном приложении. Сроки, наличие книги и порядок использования фишек определяются отдельными условиями предложения по книге.</p>
-          <p><span class="rules__n">2.12.</span> Предложение по книге является самостоятельным. Получение игрового промокода не означает получение книги бесплатно и не заменяет выполнение условий ее приобретения.</p>
-          <p><span class="rules__n">2.13.</span> Участники самостоятельно и за свой счет несут расходы, связанные с участием в Игре и использованием промокода, в том числе расходы на доступ в сеть Интернет по тарифам операторов связи. Указанные расходы Организатором не компенсируются.</p>
-          <p><span class="rules__n">2.14.</span> Участники самостоятельно и за свой счет несут расходы, связанные с участием в Игре и использованием промокода, в том числе расходы на доступ в сеть Интернет по тарифам операторов связи. Указанные расходы Организатором не компенсируются</p>
-          <h3>3. Прочая информация</h3>
-          <p><span class="rules__n">3.1.</span> Настоящие Условия размещаются в мобильном приложении «Макси» и доступны для ознакомления Участникам.</p>
-          <p><span class="rules__n">3.2.</span> Организатор вправе изменить сроки и условия Акции, приостановить либо досрочно прекратить ее проведение, уведомив Участников путем размещения соответствующего объявления в мобильном приложении «Макси».</p>
-          <p><span class="rules__n">3.3.</span> Участник самостоятельно знакомится с условиями активации и использования промокода. Риски несоблюдения этих условий несет Участник.</p>
-          <p><span class="rules__n">3.4.</span> Принимая участие в Акции, Участник подтверждает, что ознакомлен с настоящими Условиями и согласен с ними.</p>
-          <!-- rules:end -->
-      </div>
-    </div>
-
-  </div>
+<header class="bar"><div class="bar__in"><img class="bar__logo" src="../../assets/logo.webp" alt="Макси — сеть магазинов" width="137" height="56"></div></header>
+<main class="page">
+  <p class="kicker">Моя планета</p>
+  <h1 class="name">Вкусовая экспедиция</h1>
+  <figure class="art"><img src="../../assets/planet-expedition-card.webp" alt="Фиолетовая планета с кристаллами, лестницами и подзорной трубой, на вершине роза под стеклянным колпаком" width="720" height="720"></figure>
+  <p class="headline">Тебе интересно, что за следующим поворотом</p>
+  <section class="cta" aria-labelledby="cta-title">
+    <h2 id="cta-title">А какая планета у тебя?</h2>
+    <p>Выбирай любимые продукты и получи промокод от Макси</p>
+    <a class="btn" id="go" href="../../?utm_source=share_page&utm_medium=quiz&utm_campaign=planet_expedition">
+      <span class="btn__label">Узнать свою планету</span>
+      <span class="gloss gloss--1" aria-hidden="true"><img src="../../assets/gloss-1.svg" alt=""></span>
+      <span class="gloss gloss--2" aria-hidden="true"><img src="../../assets/gloss-2.svg" alt=""></span>
+    </a>
+  </section>
 </main>
-
-<script src="game.js"></script>
+<script>
+document.getElementById('go').addEventListener('click', function () {
+  try { (window._tmr = window._tmr || []).push({id: '3814173', type: 'reachGoal', goal: 'sharePageClick'}); } catch (e) {}
+});
+</script>
 </body>
 </html>

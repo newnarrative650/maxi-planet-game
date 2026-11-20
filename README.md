@@ -8,8 +8,8 @@
 - Свой сервер (Ubuntu/Debian): скрипт `deploy.sh` ставит nginx и забирает игру из этого репозитория; повторный запуск подтягивает свежую версию.
 
 ## Метрика и «Поделиться»
-- Счётчик Top.Mail.Ru (id `3814173`): код в `index.html`, цели (`startClick`, `q1Answer…q8Answer`, `resultShown`, `resultHome/Expedition/Garden/Sweet`, `giftsClick`, `promoCopy`, `bookClick`, `rulesClick`, `restartClick`, `backClick`, `shareClick`, `shareSent`) отправляет `track()` в `game.js`.
-- «Поделиться» ведёт на `p/<планета>/` — копии игры со своими OG-тегами и картинкой `assets/share-<планета>.jpg` (1200×630). Адреса в тегах абсолютные, их домен задаётся при сборке (`SITE_URL`, по умолчанию `https://maxi-planet-game.vercel.app`); при смене домена теги нужно пересобрать (`SITE_URL=https://домен python3 build_share.py`).
+- Счётчик Top.Mail.Ru (id `3814173`): код в `index.html`, цели (`startClick`, `q1Answer…q8Answer`, `resultShown`, `resultHome/Expedition/Garden/Sweet`, `giftsClick`, `promoCopy`, `bookClick`, `rulesClick`, `restartClick`, `backClick`, `shareClick`, `shareSent`, `sharePageClick` — нажали «Узнать свою планету» на странице планеты) отправляет `track()` в `game.js`.
+- «Поделиться» ведёт на `p/<планета>/` — отдельную страницу: «Моя планета — название», картинка планеты (`assets/planet-<планета>-card.webp`, вырезается из большой картинки), фраза о планете и кнопка «Узнать свою планету» в игру. У страницы свои OG-теги и картинка превью `assets/share-<планета>.jpg` (1200×630). Адреса в тегах абсолютные, их домен задаётся при сборке (`SITE_URL`, по умолчанию `https://maxi-planet-game.vercel.app`); при смене домена теги нужно пересобрать (`SITE_URL=https://домен python3 build_share.py`). Страницы и вырезки собирает `build_share.py`.
 
 ## Что настраивается в `game.js`
 - `QUESTIONS` — вопросы и продукты (подпись `label`, артикул `sku`, планета `planet`, фото `img`).
