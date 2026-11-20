@@ -33,11 +33,12 @@ body { margin: 0; min-height: 100vh; min-height: 100dvh; background: var(--paper
 .bar__logo { display: block; width: 137px; height: 56px; }
 .page { max-width: 480px; margin: 0 auto; padding: 18px max(20px, env(safe-area-inset-left, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)); text-align: center; }
 .kicker { margin: 0; color: var(--grey); font-weight: 800; font-size: 16px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; }
-.name { margin: 4px 0 18px; font-weight: 900; font-size: clamp(36px, 11.5vw, 50px); line-height: 1.05; text-wrap: balance; }
+.name { display: flex; align-items: center; justify-content: center; min-height: 2.1em; margin: 4px 0 18px; font-weight: 900; font-size: clamp(36px, 11.5vw, 50px); line-height: 1.05; text-wrap: balance; }
 .art { width: min(100%, 316px); margin: 0 auto; border-radius: 28px; overflow: hidden; box-shadow: 0 12px 32px rgba(120, 70, 20, .2), 0 0 0 1px rgba(120, 70, 20, .06); animation: art-in .5s ease both; }
 .art img { display: block; width: 100%; height: auto; }
 @keyframes art-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
-.headline { margin: 20px 0 0; font-weight: 800; font-size: 22px; line-height: 1.2; text-wrap: balance; }
+.headline { display: flex; align-items: center; justify-content: center; min-height: 2.4em; margin: 20px 0 0; font-weight: 800; font-size: 22px; line-height: 1.2; text-wrap: balance; }
+/* название и фраза занимают по две строки у всех планет, чтобы картинка и зелёная кнопка стояли на одном месте */
 .cta { margin-top: 28px; padding-top: 24px; border-top: 2px dashed rgba(120, 70, 20, .2); }
 .cta h2 { margin: 0; font-weight: 900; font-size: 28px; line-height: 1.1; text-wrap: balance; }
 .cta p { margin: 8px 0 18px; color: var(--grey); font-weight: 600; font-size: 17px; line-height: 1.25; text-wrap: balance; }
