@@ -278,6 +278,9 @@ body {
 .topbar__back:focus-visible, .topbar .rules-link:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .screen[data-view="gifts"] .topbar__back { display: grid; }
 .screen[data-view="gifts"] .topbar__logo { left: 48px; }
+/* в приложении на стартовом экране стрелка закрывает игру (MaxiGame.closeGame) */
+.in-app .screen[data-view="start"] .topbar__back { display: grid; }
+.in-app .screen[data-view="start"] .topbar__logo { left: 48px; }
 
 .is-entering { animation: enter .35s ease both; }
 @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

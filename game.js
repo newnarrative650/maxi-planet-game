@@ -204,6 +204,19 @@
     try { (window._tmr = window._tmr || []).push({ id: COUNTER_ID, type: 'reachGoal', goal }); } catch (_) { /* счётчик не должен ломать игру */ }
   }
 
+  /* ------------------------------ мост с мобильным приложением ------------------------------ */
+  // Внутри WebView приложение даёт глобальный объект MaxiGame (Android — addJavascriptInterface, iOS — скрипт при загрузке).
+  // Метод MaxiGame.closeGame() закрывает игру и возвращает в приложение. Вне приложения объекта нет, и кнопка выхода не показывается.
+  const appBridge = () => (window.MaxiGame && window.MaxiGame.closeGame ? window.MaxiGame : null);
+  function syncInApp() { document.documentElement.classList.toggle('in-app', !!appBridge()); }
+  function closeGameInApp() {
+    const bridge = appBridge();
+    if (!bridge) return false;
+    track('closeGameClick');
+    setTimeout(() => { try { bridge.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ } }, 150);   // пауза, чтобы успела уйти метрика
+    return true;
+  }
+
   const TITLE = { maxW: 350, maxFont: 30, minFont: 24 };
   const W = 390, H = 844;
   const CARD = { w: 163, h: 188, r: 20, pad: 10, imgH: 125, gap: 8, nameBoxH: 33 };
@@ -789,6 +802,7 @@
     }
     screen.dataset.view = name;
     document.documentElement.dataset.view = name;   // для фона вокруг экрана на телефоне (game.css)
+    syncInApp();                                     // объект MaxiGame мог появиться уже после загрузки страницы
     screen.setAttribute('aria-label', `Игра «Узнай свою планету». ${VIEW_LABEL[name]}`);
     if (name !== 'game') resetGameLayer();
     if (focus && name !== 'game') views[name].focus({ preventScroll: true });
@@ -930,6 +944,7 @@
   $('#rules-close').addEventListener('click', () => closeRules());
   $('#btn-share').addEventListener('click', shareResult);
   $('#btn-back').addEventListener('click', () => {
+    if (view === 'start' && closeGameInApp()) return;      // на старте в приложении стрелка закрывает игру
     track('backClick');
     if (lastPlanet) { showResult(lastPlanet); } else { setHash('start'); showView('start'); }
   });
