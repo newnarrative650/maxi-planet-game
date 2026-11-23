@@ -948,6 +948,7 @@
     track('backClick');
     if (lastPlanet) { showResult(lastPlanet); } else { setHash('start'); showView('start'); }
   });
+  $('#btn-exit').addEventListener('click', () => { closeGameInApp(); });
   $('#book-link').addEventListener('click', () => track('bookClick'));
   screen.addEventListener('choose', (e) => track('q' + e.detail.question + 'Answer'));
   copyBtn.addEventListener('click', copyPromo);

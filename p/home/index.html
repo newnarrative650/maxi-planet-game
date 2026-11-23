@@ -31,6 +31,10 @@ body { margin: 0; min-height: 100vh; min-height: 100dvh; background: var(--paper
 .bar { background: var(--green); padding-top: env(safe-area-inset-top, 0px); }
 .bar__in { max-width: 480px; height: 56px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; }
 .bar__logo { display: block; width: 137px; height: 56px; }
+.exit { display: none; margin-left: auto; height: 32px; padding: 0 16px; border: 1.5px solid #fff; border-radius: 16px; background: none; color: #fff; font: 800 15px/29px "Nunito", "Segoe UI", system-ui, sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.in-app .exit { display: block; }
+.exit:active { background: rgba(255, 255, 255, .22); }
+.exit:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .page { max-width: 480px; margin: 0 auto; padding: 18px max(20px, env(safe-area-inset-left, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)); text-align: center; }
 .kicker { margin: 0; color: var(--grey); font-weight: 800; font-size: 16px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; }
 .name { display: flex; align-items: center; justify-content: center; min-height: 2.1em; margin: 4px 0 18px; font-weight: 900; font-size: clamp(36px, 11.5vw, 50px); line-height: 1.05; text-wrap: balance; }
@@ -70,7 +74,7 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
 </head>
 <body>
 <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3814173;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
-<header class="bar"><div class="bar__in"><img class="bar__logo" src="../../assets/logo.webp" alt="Макси — сеть магазинов" width="137" height="56"></div></header>
+<header class="bar"><div class="bar__in"><img class="bar__logo" src="../../assets/logo.webp" alt="Макси — сеть магазинов" width="137" height="56"><button class="exit" id="exit" type="button">Выйти</button></div></header>
 <main class="page">
   <p class="kicker">Моя планета</p>
   <h1 class="name">Домашний очаг</h1>
@@ -87,6 +91,16 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
   </section>
 </main>
 <script>
+// «Выйти» показывается только внутри приложения (там есть объект MaxiGame с методом closeGame)
+(function () {
+  var root = document.documentElement;
+  function sync() { var m = window.MaxiGame; root.classList.toggle('in-app', !!(m && m.closeGame)); }
+  sync(); window.addEventListener('pageshow', sync); setTimeout(sync, 400); setTimeout(sync, 1500);   // объект может появиться уже после загрузки
+  document.getElementById('exit').addEventListener('click', function () {
+    try { (window._tmr = window._tmr || []).push({id: '3814173', type: 'reachGoal', goal: 'closeGameClick'}); } catch (e) {}
+    setTimeout(function () { try { window.MaxiGame.closeGame(); } catch (e) {} }, 150);
+  });
+})();
 document.getElementById('go').addEventListener('click', function () {
   try { (window._tmr = window._tmr || []).push({id: '3814173', type: 'reachGoal', goal: 'sharePageClick'}); } catch (e) {}
 });
