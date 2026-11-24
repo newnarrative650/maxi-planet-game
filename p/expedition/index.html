@@ -90,12 +90,13 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
   </section>
 </main>
 <script>
-// «Выйти»: в приложении закрывает игру (объект MaxiGame.closeGame), вне приложения возвращает назад или ведёт на сайт Макси
+// «Выйти»: в приложении закрывает игру (метод closeGame у объекта MaxiGame или AndroidInterface), вне приложения возвращает назад или ведёт на сайт Макси
 document.getElementById('exit').addEventListener('click', function () {
   try { (window._tmr = window._tmr || []).push({id: '3814173', type: 'reachGoal', goal: 'closeGameClick'}); } catch (e) {}
   setTimeout(function () {
-    var m = window.MaxiGame;
-    if (m && m.closeGame) { try { m.closeGame(); } catch (e) {} return; }
+    var names = ['MaxiGame', 'AndroidInterface'], m = null;   // имя объекта зависит от платформы
+    for (var i = 0; i < names.length && !m; i++) { if (window[names[i]] && window[names[i]].closeGame) m = window[names[i]]; }
+    if (m) { try { m.closeGame(); } catch (e) {} return; }
     if (document.referrer && history.length > 1) history.back(); else location.href = 'https://maxi-retail.ru/';
   }, 150);
 });

@@ -205,10 +205,19 @@
   }
 
   /* ------------------------------ выход из игры (мост с мобильным приложением) ------------------------------ */
-  // Внутри WebView приложение даёт глобальный объект MaxiGame (Android — addJavascriptInterface, iOS — скрипт при загрузке).
-  // MaxiGame.closeGame() закрывает игру и возвращает в приложение. Кнопки «Выйти» видны всегда; вне приложения (где объекта нет)
-  // они возвращают туда, откуда пришли, а если некуда — ведут на сайт Макси, так что кнопка никогда не «мёртвая».
-  const appBridge = () => (window.MaxiGame && window.MaxiGame.closeGame ? window.MaxiGame : null);
+  // Приложение даёт в WebView глобальный JS-объект с методом closeGame(), он закрывает игру и возвращает в приложение.
+  // Имя объекта зависит от платформы: MaxiGame (по ТЗ) и AndroidInterface (так интерфейс называется в Android с первой реализации).
+  // Подходит любой из них; если появится другое имя (например, у iOS), его достаточно добавить в BRIDGE_NAMES.
+  // Кнопки «Выйти» видны всегда; вне приложения (где объекта нет) они возвращают туда, откуда пришли,
+  // а если некуда — ведут на сайт Макси, так что кнопка никогда не «мёртвая».
+  const BRIDGE_NAMES = ['MaxiGame', 'AndroidInterface'];
+  function appBridge() {
+    for (const name of BRIDGE_NAMES) {
+      const obj = window[name];
+      if (obj && obj.closeGame) return obj;
+    }
+    return null;
+  }
   function exitGame() {
     track('closeGameClick');
     setTimeout(() => {                       // пауза, чтобы успела уйти метрика
