@@ -278,9 +278,9 @@ body {
 .topbar__back:focus-visible, .topbar .rules-link:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .screen[data-view="gifts"] .topbar__back { display: grid; }
 .screen[data-view="gifts"] .topbar__logo { left: 48px; }
-/* в приложении на стартовом экране стрелка закрывает игру (MaxiGame.closeGame) */
-.in-app .screen[data-view="start"] .topbar__back { display: grid; }
-.in-app .screen[data-view="start"] .topbar__logo { left: 48px; }
+/* на стартовом экране стрелка выходит из игры (MaxiGame.closeGame в приложении) */
+.screen[data-view="start"] .topbar__back { display: grid; }
+.screen[data-view="start"] .topbar__logo { left: 48px; }
 
 .is-entering { animation: enter .35s ease both; }
 @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -354,7 +354,7 @@ body {
 }
 .screen:not([data-view="start"]) .rules-link { display: none; }
 
-/* кнопка «Выйти» (только внутри приложения, где есть MaxiGame): на результате и на экране подарков, справа в шапке */
+/* кнопка «Выйти»: на результате и на экране подарков, справа в шапке; видна всегда */
 .topbar__exit {
   position: absolute; right: 14px; top: 12px; z-index: 2; display: none;
   height: 32px; margin: 0; padding: 0 16px; border: 1.5px solid #fff; border-radius: 16px; background: none;
@@ -362,7 +362,7 @@ body {
 }
 .topbar__exit:active { background: rgba(255, 255, 255, .22); }
 .topbar__exit:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-.in-app .screen[data-view="result"] .topbar__exit, .in-app .screen[data-view="gifts"] .topbar__exit { display: block; }
+.screen[data-view="result"] .topbar__exit, .screen[data-view="gifts"] .topbar__exit { display: block; }
 .intro {
   position: absolute;
   left: 0;

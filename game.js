@@ -190,7 +190,7 @@
   // Где стоит планета на экране результата: центр по x и y, масштаб не меньше min (чтобы картинка закрывала экран)
   const ART_SLOT = { cx: 195, cy: 340, scale: 0.66, w: 1024, h: 1536 };
   const PROMO = { code: 'ПЛАНЕТАЕДА' };
-  const LINKS = { book: 'https://maxi-retail.ru/catalog/3042' };
+  const LINKS = { book: 'https://maxi-retail.ru/catalog/3042', home: 'https://maxi-retail.ru/' };
 
   // Счётчик Top.Mail.Ru: сам код стоит в index.html, здесь только отправка целей.
   // Названия целей — латиница и цифры, как требует счётчик:
@@ -204,17 +204,18 @@
     try { (window._tmr = window._tmr || []).push({ id: COUNTER_ID, type: 'reachGoal', goal }); } catch (_) { /* счётчик не должен ломать игру */ }
   }
 
-  /* ------------------------------ мост с мобильным приложением ------------------------------ */
+  /* ------------------------------ выход из игры (мост с мобильным приложением) ------------------------------ */
   // Внутри WebView приложение даёт глобальный объект MaxiGame (Android — addJavascriptInterface, iOS — скрипт при загрузке).
-  // Метод MaxiGame.closeGame() закрывает игру и возвращает в приложение. Вне приложения объекта нет, и кнопка выхода не показывается.
+  // MaxiGame.closeGame() закрывает игру и возвращает в приложение. Кнопки «Выйти» видны всегда; вне приложения (где объекта нет)
+  // они возвращают туда, откуда пришли, а если некуда — ведут на сайт Макси, так что кнопка никогда не «мёртвая».
   const appBridge = () => (window.MaxiGame && window.MaxiGame.closeGame ? window.MaxiGame : null);
-  function syncInApp() { document.documentElement.classList.toggle('in-app', !!appBridge()); }
-  function closeGameInApp() {
-    const bridge = appBridge();
-    if (!bridge) return false;
+  function exitGame() {
     track('closeGameClick');
-    setTimeout(() => { try { bridge.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ } }, 150);   // пауза, чтобы успела уйти метрика
-    return true;
+    setTimeout(() => {                       // пауза, чтобы успела уйти метрика
+      const bridge = appBridge();            // объект проверяем в момент нажатия: он мог появиться уже после загрузки страницы
+      if (bridge) { try { bridge.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ } return; }
+      if (document.referrer && history.length > 1) history.back(); else location.href = LINKS.home;   // пришли по ссылке — назад, иначе на сайт Макси
+    }, 150);
   }
 
   const TITLE = { maxW: 350, maxFont: 30, minFont: 24 };
@@ -802,7 +803,6 @@
     }
     screen.dataset.view = name;
     document.documentElement.dataset.view = name;   // для фона вокруг экрана на телефоне (game.css)
-    syncInApp();                                     // объект MaxiGame мог появиться уже после загрузки страницы
     screen.setAttribute('aria-label', `Игра «Узнай свою планету». ${VIEW_LABEL[name]}`);
     if (name !== 'game') resetGameLayer();
     if (focus && name !== 'game') views[name].focus({ preventScroll: true });
@@ -944,11 +944,11 @@
   $('#rules-close').addEventListener('click', () => closeRules());
   $('#btn-share').addEventListener('click', shareResult);
   $('#btn-back').addEventListener('click', () => {
-    if (view === 'start' && closeGameInApp()) return;      // на старте в приложении стрелка закрывает игру
+    if (view === 'start') { exitGame(); return; }          // на стартовом экране стрелка выходит из игры
     track('backClick');
     if (lastPlanet) { showResult(lastPlanet); } else { setHash('start'); showView('start'); }
   });
-  $('#btn-exit').addEventListener('click', () => { closeGameInApp(); });
+  $('#btn-exit').addEventListener('click', exitGame);
   $('#book-link').addEventListener('click', () => track('bookClick'));
   screen.addEventListener('choose', (e) => track('q' + e.detail.question + 'Answer'));
   copyBtn.addEventListener('click', copyPromo);
