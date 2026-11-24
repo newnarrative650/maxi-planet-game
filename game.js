@@ -190,7 +190,7 @@
   // Где стоит планета на экране результата: центр по x и y, масштаб не меньше min (чтобы картинка закрывала экран)
   const ART_SLOT = { cx: 195, cy: 340, scale: 0.66, w: 1024, h: 1536 };
   const PROMO = { code: 'ПЛАНЕТАЕДА' };
-  const LINKS = { book: 'https://maxi-retail.ru/catalog/3042', home: 'https://maxi-retail.ru/' };
+  const LINKS = { book: 'https://maxi-retail.ru/catalog/3042' };
 
   // Счётчик Top.Mail.Ru: сам код стоит в index.html, здесь только отправка целей.
   // Названия целей — латиница и цифры, как требует счётчик:
@@ -205,29 +205,34 @@
   }
 
   /* ------------------------------ выход из игры (мост с мобильным приложением) ------------------------------ */
-  // Приложение даёт в WebView способ закрыть игру и вернуться в приложение:
-  //  • Android и ТЗ: глобальный JS-объект с методом closeGame() — MaxiGame (по ТЗ) или AndroidInterface (так он назван в Android с первой реализации);
-  //    если появится другое имя, его достаточно добавить в BRIDGE_NAMES;
-  //  • iOS (WKWebView): window.webkit.messageHandlers.closeGame.postMessage({}).
-  // Кнопки «Выйти» видны всегда; вне приложения (где ни того ни другого нет) они возвращают туда, откуда пришли,
-  // а если некуда — ведут на сайт Макси, так что кнопка никогда не «мёртвая».
-  const BRIDGE_NAMES = ['MaxiGame', 'AndroidInterface'];
-  // Пробуем закрыть через приложение. Возвращает true, если нашёлся канал связи (даже если вызов бросил ошибку — остаёмся в игре).
+  // Выход из игры — так же, как в «Планетяшах» (close_game):
+  //  • Android: window.AndroidInterface.closeGame() (так объект назван в Android с первой реализации);
+  //    дополнительно принимаем MaxiGame.closeGame() из ТЗ — если такого объекта нет, он ни на что не влияет;
+  //  • iOS (WKWebView): window.webkit.messageHandlers.closeGame.postMessage({});
+  //  • вне приложения ничего не происходит, только запись в консоль.
+  // Кнопки «Выйти» видны всегда; канал связи проверяется в момент нажатия: он мог появиться уже после загрузки страницы.
+  const BRIDGE_NAMES = ['AndroidInterface', 'MaxiGame'];
   function closeViaApp() {
     for (const name of BRIDGE_NAMES) {
       const obj = window[name];
-      if (obj && obj.closeGame) { try { obj.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ } return true; }
+      if (obj && typeof obj.closeGame === 'function') {
+        console.log('call window.' + name + '.closeGame()');
+        try { obj.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ }
+        return true;
+      }
     }
     const h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.closeGame;
-    if (h && h.postMessage) { try { h.postMessage({}); } catch (_) { /* то же */ } return true; }
+    if (h) {
+      console.log('call window.webkit.messageHandlers.closeGame.postMessage({})');
+      try { h.postMessage({}); } catch (_) { /* то же */ }
+      return true;
+    }
+    console.log('closeGame не поддерживается на этой платформе');
     return false;
   }
   function exitGame() {
     track('closeGameClick');
-    setTimeout(() => {                       // пауза, чтобы успела уйти метрика
-      if (closeViaApp()) return;             // канал проверяем в момент нажатия: он мог появиться уже после загрузки страницы
-      if (document.referrer && history.length > 1) history.back(); else location.href = LINKS.home;   // пришли по ссылке — назад, иначе на сайт Макси
-    }, 150);
+    setTimeout(closeViaApp, 150);            // пауза, чтобы успела уйти метрика
   }
 
   const TITLE = { maxW: 350, maxFont: 30, minFont: 24 };

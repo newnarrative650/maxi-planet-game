@@ -90,16 +90,18 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
   </section>
 </main>
 <script>
-// «Выйти»: в приложении закрывает игру (Android: closeGame() у MaxiGame или AndroidInterface; iOS: webkit.messageHandlers.closeGame), вне приложения возвращает назад или ведёт на сайт Макси
+// «Выйти»: как в «Планетяшах» — Android: AndroidInterface.closeGame() (и MaxiGame из ТЗ), iOS: webkit.messageHandlers.closeGame.postMessage; вне приложения ничего не происходит
 document.getElementById('exit').addEventListener('click', function () {
   try { (window._tmr = window._tmr || []).push({id: '3814173', type: 'reachGoal', goal: 'closeGameClick'}); } catch (e) {}
   setTimeout(function () {
-    var names = ['MaxiGame', 'AndroidInterface'], m = null;   // имя объекта зависит от платформы
-    for (var i = 0; i < names.length && !m; i++) { if (window[names[i]] && window[names[i]].closeGame) m = window[names[i]]; }
-    if (m) { try { m.closeGame(); } catch (e) {} return; }
-    var h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.closeGame;   // iOS (WKWebView)
-    if (h && h.postMessage) { try { h.postMessage({}); } catch (e) {} return; }
-    if (document.referrer && history.length > 1) history.back(); else location.href = 'https://maxi-retail.ru/';
+    var names = ['AndroidInterface', 'MaxiGame'];
+    for (var i = 0; i < names.length; i++) {
+      var o = window[names[i]];
+      if (o && typeof o.closeGame === 'function') { console.log('call window.' + names[i] + '.closeGame()'); try { o.closeGame(); } catch (e) {} return; }
+    }
+    var h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.closeGame;
+    if (h) { console.log('call window.webkit.messageHandlers.closeGame.postMessage({})'); try { h.postMessage({}); } catch (e) {} return; }
+    console.log('closeGame не поддерживается на этой платформе');
   }, 150);
 });
 document.getElementById('go').addEventListener('click', function () {
