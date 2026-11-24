@@ -71,6 +71,21 @@ body {
     background: #39a12c;
     pointer-events: none;
   }
+  /* На краях масштабированного экрана (дробная граница пикселя) в WebView iPhone проступала светлая вертикальная линия в шапке.
+     Поэтому по бокам экрана шапка закрашивается ещё раз поверх, с заходом на 3px внутрь экрана (там тот же зелёный). */
+  body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 2;
+    height: calc(env(safe-area-inset-top, 0px) + 56px * var(--s));
+    background: linear-gradient(to right,
+      #39a12c calc(50% - 195px * var(--s) + 3px), transparent calc(50% - 195px * var(--s) + 3px),
+      transparent calc(50% + 195px * var(--s) - 3px), #39a12c calc(50% + 195px * var(--s) - 3px));
+    pointer-events: none;
+  }
   .stage { z-index: 1; border-radius: 0; box-shadow: none; }
   /* на дробной границе экрана не должно проступать тёмное «море» под картинкой */
   .stage .screen, .stage .view--game, .stage .bg { background: transparent; }
