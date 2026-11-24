@@ -205,24 +205,27 @@
   }
 
   /* ------------------------------ выход из игры (мост с мобильным приложением) ------------------------------ */
-  // Приложение даёт в WebView глобальный JS-объект с методом closeGame(), он закрывает игру и возвращает в приложение.
-  // Имя объекта зависит от платформы: MaxiGame (по ТЗ) и AndroidInterface (так интерфейс называется в Android с первой реализации).
-  // Подходит любой из них; если появится другое имя (например, у iOS), его достаточно добавить в BRIDGE_NAMES.
-  // Кнопки «Выйти» видны всегда; вне приложения (где объекта нет) они возвращают туда, откуда пришли,
+  // Приложение даёт в WebView способ закрыть игру и вернуться в приложение:
+  //  • Android и ТЗ: глобальный JS-объект с методом closeGame() — MaxiGame (по ТЗ) или AndroidInterface (так он назван в Android с первой реализации);
+  //    если появится другое имя, его достаточно добавить в BRIDGE_NAMES;
+  //  • iOS (WKWebView): window.webkit.messageHandlers.closeGame.postMessage({}).
+  // Кнопки «Выйти» видны всегда; вне приложения (где ни того ни другого нет) они возвращают туда, откуда пришли,
   // а если некуда — ведут на сайт Макси, так что кнопка никогда не «мёртвая».
   const BRIDGE_NAMES = ['MaxiGame', 'AndroidInterface'];
-  function appBridge() {
+  // Пробуем закрыть через приложение. Возвращает true, если нашёлся канал связи (даже если вызов бросил ошибку — остаёмся в игре).
+  function closeViaApp() {
     for (const name of BRIDGE_NAMES) {
       const obj = window[name];
-      if (obj && obj.closeGame) return obj;
+      if (obj && obj.closeGame) { try { obj.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ } return true; }
     }
-    return null;
+    const h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.closeGame;
+    if (h && h.postMessage) { try { h.postMessage({}); } catch (_) { /* то же */ } return true; }
+    return false;
   }
   function exitGame() {
     track('closeGameClick');
     setTimeout(() => {                       // пауза, чтобы успела уйти метрика
-      const bridge = appBridge();            // объект проверяем в момент нажатия: он мог появиться уже после загрузки страницы
-      if (bridge) { try { bridge.closeGame(); } catch (_) { /* приложение не смогло закрыть — остаёмся в игре */ } return; }
+      if (closeViaApp()) return;             // канал проверяем в момент нажатия: он мог появиться уже после загрузки страницы
       if (document.referrer && history.length > 1) history.back(); else location.href = LINKS.home;   // пришли по ссылке — назад, иначе на сайт Макси
     }, 150);
   }
