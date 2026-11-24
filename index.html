@@ -148,15 +148,17 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
       </div>
     </section>
 
-    <!-- Шапка: зелёная, с логотипом (как на лендинге). На экране подарков слева стрелка назад к своей планете -->
+    <!-- Шапка: зелёная, с логотипом (как на лендинге). Справа везде кнопка «Выйти»; на экране подарков слева стрелка назад к своей планете -->
     <header class="topbar">
       <button class="topbar__back" id="btn-back" type="button" aria-label="Назад к своей планете">
         <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <img class="topbar__logo" src="assets/logo.webp" alt="Макси — сеть магазинов" width="137" height="56" draggable="false">
       <button class="topbar__exit" id="btn-exit" type="button">Выйти</button>
-      <button class="rules-link" id="rules-link" type="button" aria-haspopup="dialog" aria-controls="rules">Правила акции</button>
     </header>
+
+    <!-- Правила акции: ссылка под шапкой на главной странице -->
+      <button class="rules-link" id="rules-link" type="button" aria-haspopup="dialog" aria-controls="rules">Правила акции</button>
 
     <!-- Правила акции: открываются по ссылке «Правила акции» на стартовом экране. Текст берётся из Pravila_igry.docx (gen_rules.py) -->
     <div class="rules" id="rules" hidden role="dialog" aria-modal="true" aria-labelledby="rules-title">

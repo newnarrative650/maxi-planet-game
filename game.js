@@ -953,7 +953,6 @@
   $('#rules-close').addEventListener('click', () => closeRules());
   $('#btn-share').addEventListener('click', shareResult);
   $('#btn-back').addEventListener('click', () => {
-    if (view === 'start') { exitGame(); return; }          // на стартовом экране стрелка выходит из игры
     track('backClick');
     if (lastPlanet) { showResult(lastPlanet); } else { setHash('start'); showView('start'); }
   });
