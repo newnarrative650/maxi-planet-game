@@ -190,13 +190,14 @@
   // Где стоит планета на экране результата: центр по x и y, масштаб не меньше min (чтобы картинка закрывала экран)
   const ART_SLOT = { cx: 195, cy: 340, scale: 0.66, w: 1024, h: 1536 };
   const PROMO = { code: 'ПЛАНЕТАЕДА' };
+  PROMO.url = 'https://maxi-retail.ru/mp?spec_offer=OFFLINE_PROMOCODES&promo_code=' + encodeURIComponent(PROMO.code);   // диплинк кнопки «Активировать»
   const LINKS = { book: 'https://maxi-retail.ru/catalog/3042' };
 
   // Счётчик Top.Mail.Ru: сам код стоит в index.html, здесь только отправка целей.
   // Названия целей — латиница и цифры, как требует счётчик:
   //   startClick — нажата «Начать путешествие»;  q1Answer … q8Answer — выбран продукт на вопросе N;
   //   resultShown — показан результат после игры;  resultHome / resultExpedition / resultGarden / resultSweet — какая планета;
-  //   giftsClick — «Забрать подарки»;  promoCopy — промокод скопирован;  promoCopyFail — скопировать не удалось, код выделен;
+  //   giftsClick — «Забрать подарки»;  promoActivate — «Активировать» (переход по диплинку с промокодом);
   //   bookClick — «Подробнее о книге»;  rulesClick — «Правила акции»;  restartClick — «Пройти ещё раз»;
   //   backClick — стрелка назад с экрана подарков;  shareClick — нажата «Поделиться»;  shareSent — ссылка ушла (окно «Поделиться» завершено или ссылка скопирована).
   const COUNTER_ID = '3814173';
@@ -862,24 +863,8 @@
   }
 
   /* ------------------------------ подарки и промокод ------------------------------ */
-  const copyBtn = $('#btn-copy');
-  const copyLabel = $('#btn-copy-label');
+  const activateBtn = $('#btn-activate');
   const codeEl = $('#promo-code');
-
-  function setCopyState(st) {   // idle | done | manual
-    copyBtn.classList.toggle('btn--gray', st === 'done');
-    copyBtn.dataset.state = st;
-    copyLabel.textContent = st === 'done' ? 'Промокод скопирован' : st === 'manual' ? 'Скопируй вручную' : 'Забрать';
-    $('#copy-status').textContent = st === 'done' ? 'Промокод скопирован'
-      : st === 'manual' ? 'Автоматически скопировать не удалось. Промокод выделен, скопируй его вручную' : '';
-  }
-
-  function selectCode() {
-    try {
-      const r = document.createRange(); r.selectNodeContents(codeEl);
-      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    } catch (_) { /* не критично */ }
-  }
 
   function legacyCopy(text) {
     try {
@@ -891,15 +876,6 @@
       ta.remove();
       return ok;
     } catch (_) { return false; }
-  }
-
-  async function copyPromo() {
-    let ok = false;
-    try { await navigator.clipboard.writeText(PROMO.code); ok = true; } catch (_) { ok = legacyCopy(PROMO.code); }
-    if (!ok) selectCode();
-    setCopyState(ok ? 'done' : 'manual');
-    track(ok ? 'promoCopy' : 'promoCopyFail');
-    setHash(ok ? 'gifts-copied' : 'gifts');
   }
 
   /* ------------------------------ поделиться результатом ------------------------------ */
@@ -936,9 +912,8 @@
     flashShare(ok ? 'Ссылка скопирована' : 'Не удалось скопировать');
   }
 
-  function showGifts(copied = false) {
-    setCopyState(copied ? 'done' : 'idle');
-    setHash(copied ? 'gifts-copied' : 'gifts');
+  function showGifts() {
+    setHash('gifts');
     showView('gifts');
   }
 
@@ -950,12 +925,12 @@
       const name = Object.keys(PLANETS).find((n) => PLANETS[n].key === m[1]);
       if (name) { showResult(name); return; }
     }
-    if (route === 'gifts' || route === 'gifts-copied') { showGifts(route === 'gifts-copied'); return; }
+    if (route === 'gifts' || route === 'gifts-copied') { showGifts(); return; }   // #gifts-copied — старая ссылка, ведёт на тот же экран
     showView('start', opts);
   }
 
   $('#btn-start').addEventListener('click', () => { track('startClick'); startGame(0); });
-  $('#btn-gifts').addEventListener('click', () => { track('giftsClick'); showGifts(false); });
+  $('#btn-gifts').addEventListener('click', () => { track('giftsClick'); showGifts(); });
   $('#btn-again').addEventListener('click', () => { track('restartClick'); startGame(0); });
   $('#rules-link').addEventListener('click', () => { track('rulesClick'); openRules(); });
   $('#rules-close').addEventListener('click', () => closeRules());
@@ -967,8 +942,8 @@
   $('#btn-exit').addEventListener('click', exitGame);
   $('#book-link').addEventListener('click', () => track('bookClick'));
   screen.addEventListener('choose', (e) => track('q' + e.detail.question + 'Answer'));
-  copyBtn.addEventListener('click', copyPromo);
-  $('#btn-copy-icon').addEventListener('click', copyPromo);
+  activateBtn.href = PROMO.url;
+  activateBtn.addEventListener('click', () => track('promoActivate'));
   $('#book-link').href = LINKS.book;
   codeEl.textContent = PROMO.code;
   window.addEventListener('hashchange', () => go(location.hash.slice(1)));

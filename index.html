@@ -108,27 +108,23 @@ _tmr.push({id: "3814173", type: "pageView", start: (new Date()).getTime()});
       </div>
     </section>
 
-    <!-- 5 · Подарки / 5.1 · промокод скопирован -->
+    <!-- 5 · Подарки: промокод и кнопка «Активировать» (диплинк в приложение Макси) -->
     <section class="view view--gifts" id="v-gifts" hidden aria-label="Подарки">
       <div class="gifts">
         <div class="promo">
           <div class="promo__head">
             <div class="promo__tile" aria-hidden="true"><img src="assets/icon-promo-basket.svg" alt="" width="34" height="34" draggable="false"></div>
-            <p class="promo__text">Забирай <b>промокод 30%</b><br>на готовую еду Макси.<br>Промокод действителен<br>до 18.02.2027. Скопируй и<br>активируй в личном кабинете.</p>
+            <p class="promo__text">Забирай <b>промокод 30%</b><br>на готовую еду Макси.<br>Промокод действителен<br>до 18.02.2027. Нажми<br>«Активировать» ниже.</p>
           </div>
           <p class="promo__label">Твой промокод</p>
           <div class="promo__field">
             <span class="promo__code" id="promo-code">ПЛАНЕТАЕДА</span>
-            <button class="promo__copy" id="btn-copy-icon" type="button" aria-label="Скопировать промокод">
-              <img src="assets/icon-copy.svg" alt="" width="24" height="24" draggable="false">
-            </button>
           </div>
-          <button class="btn btn--green" id="btn-copy" type="button">
-            <span class="btn__label" id="btn-copy-label">Забрать</span>
+          <a class="btn btn--green" id="btn-activate" href="https://maxi-retail.ru/mp?spec_offer=OFFLINE_PROMOCODES&amp;promo_code=%D0%9F%D0%9B%D0%90%D0%9D%D0%95%D0%A2%D0%90%D0%95%D0%94%D0%90" target="_blank" rel="noopener">
+            <span class="btn__label">Активировать</span>
             <span class="gloss gloss--1" aria-hidden="true"><img src="assets/gloss-1.svg" alt=""></span>
             <span class="gloss gloss--2" aria-hidden="true"><img src="assets/gloss-2.svg" alt=""></span>
-          </button>
-          <p class="promo__status" id="copy-status" role="status" aria-live="polite"></p>
+          </a>
         </div>
 
         <div class="book">

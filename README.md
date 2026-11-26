@@ -8,7 +8,7 @@
 - Свой сервер (Ubuntu/Debian): скрипт `deploy.sh` ставит nginx и забирает игру из этого репозитория; повторный запуск подтягивает свежую версию.
 
 ## Метрика и «Поделиться»
-- Счётчик Top.Mail.Ru (id `3814173`): код в `index.html`, цели (`startClick`, `q1Answer…q8Answer`, `resultShown`, `resultHome/Expedition/Garden/Sweet`, `giftsClick`, `promoCopy`, `bookClick`, `rulesClick`, `restartClick`, `backClick`, `shareClick`, `shareSent`, `sharePageClick` — нажали «Узнать свою планету» на странице планеты) отправляет `track()` в `game.js`.
+- Счётчик Top.Mail.Ru (id `3814173`): код в `index.html`, цели (`startClick`, `q1Answer…q8Answer`, `resultShown`, `resultHome/Expedition/Garden/Sweet`, `giftsClick`, `promoActivate` (нажали «Активировать» на экране подарков), `bookClick`, `rulesClick`, `restartClick`, `backClick`, `shareClick`, `shareSent`, `sharePageClick` — нажали «Узнать свою планету» на странице планеты) отправляет `track()` в `game.js`.
 - «Поделиться» ведёт на `p/<планета>/` — отдельную страницу: «Моя планета — название», картинка планеты (`assets/planet-<планета>-card.webp`, вырезается из большой картинки), фраза о планете и кнопка «Узнать свою планету» в игру. У страницы свои OG-теги и картинка превью `assets/share-<планета>.jpg` (1200×630). Адреса в тегах абсолютные, их домен задаётся при сборке (`SITE_URL`, по умолчанию `https://maxi-planet-game.vercel.app`); при смене домена теги нужно пересобрать (`SITE_URL=https://домен python3 build_share.py`). Страницы и вырезки собирает `build_share.py`.
 
 ## Что настраивается в `game.js`
@@ -19,7 +19,7 @@
 - Текст про «промокод 30% … действителен до 18.02.2027» — в `index.html`, блок `.promo__text`; даты акции в правилах (п. 1.6: с 23.11.2026 по 18.02.2027) — в блоке между `rules:begin` и `rules:end`.
 
 ## Ссылки на экраны (для проверки)
-`#start`, `#q1` … `#q8`, `#result-home`, `#result-expedition`, `#result-garden`, `#result-sweet`, `#gifts`, `#gifts-copied`.
+`#start`, `#q1` … `#q8`, `#result-home`, `#result-expedition`, `#result-garden`, `#result-sweet`, `#gifts` (`#gifts-copied` — старая ссылка, открывает тот же экран).
 
 ## Связь с мобильным приложением (WebView)
 
